@@ -1,0 +1,44 @@
+{
+  "name": "typespeed",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n web,server -c cyan,magenta \"npm run dev:web\" \"npm run dev:server\"",
+    "dev:web": "npm run dev -w @typespeed/web",
+    "dev:server": "npm run dev -w @typespeed/server",
+    "build": "npm run typecheck && npm run build -w @typespeed/web && npm run build -w @typespeed/server",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "eslint": "^9.0.0",
+    "typescript-eslint": "^8.0.0",
+    "globals": "^16.0.0",
+    "@playwright/test": "^1.51.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "concurrently": "^9.0.0",
+    "prettier": "^3.5.0",
+    "typescript": "^5.7.0",
+    "vitest": "^5.0.5"
+  },
+  "overrides": {
+    "esbuild": "^0.28.2"
+  },
+  "author": "Ankit Pandey",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/Mr-Ankitpandey/TypeSpeed.git",
+    "type": "git"
+  }
+}
