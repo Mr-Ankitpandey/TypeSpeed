@@ -912,3 +912,26 @@ summary {
   border-radius: 2px;
   transition: width 0.25s linear;
 }
+.mobile-typing-input {
+  display: block;
+  resize: none;
+  width: calc(100% - 64px);
+  margin: 0 32px 20px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px monospace;
+  height: 46px;
+}
+.performance-chart {
+  margin: 24px 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+.performance-chart svg {
+  display: block;
+  width: 100%;
+  max-height: 220px;
+}

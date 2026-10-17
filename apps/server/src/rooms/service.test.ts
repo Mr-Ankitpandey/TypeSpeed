@@ -50,6 +50,20 @@ describe('authoritative room lifecycle', () => {
       () => now,
     );
   });
+  it('updates provisional ranks before the race finishes', () => {
+    const room = start();
+    now = room.startsAt! + 1000;
+    service.tick();
+    call('guest', {
+      type: 'input',
+      round: room.round!,
+      sequence: 1,
+      operation: { kind: 'insert', char: room.passage![0] },
+    });
+    service.tick();
+    expect(view('host').state).toBe('RACING');
+    expect(view('host').players[0]).toMatchObject({ name: 'Rahul', rank: 1 });
+  });
   it('keeps pending players outside protected broadcasts and rejects host impersonation', () => {
     const guest = join();
     expect(view('guest')).toBeUndefined();

@@ -185,8 +185,8 @@ Build outputs are `apps/web/dist` and `apps/server/dist`. Production self-hostin
 
 - Server restarts remove all rooms, guest sessions, and temporary multiplayer results.
 - Practice history stores the latest **200 tests** in the current browser. Clearing browser data removes it; cross-device sync is not implemented.
-- Theme preference is saved; practice duration, difficulty, and content-option preferences are not yet persisted.
-- Input supports printable English ASCII characters and Backspace. Paste, arbitrary cursor editing, IME input, and mobile virtual-keyboard typing are not supported yet. Responsive layout support does not imply mobile typing support.
+- practice duration, difficulty, punctuation, and number preferences are also saved.
+- Input supports printable English ASCII characters and Backspace. Paste, arbitrary cursor editing, and arbitrary IME text transformations are not supported. Mobile keyboards can use the native typing input field. Native input is covered by browser tests; device-specific keyboard behavior may vary.
 - Receipt-time scoring can disadvantage high-latency connections. Rate limits detect obvious bursts but do not make browser races cheat-proof.
 - The current release targets local use and a single backend instance. Public deployment needs further operational and security hardening.
 
@@ -197,7 +197,7 @@ Build outputs are `apps/web/dist` and `apps/server/dist`. Production self-hostin
 - [x] Guest rooms with backend-enforced host approval
 - [x] Synchronized races, server-side scoring, results, and rematches
 - [x] Core automated tests and responsive interface
-- [ ] Persist practice-setting preferences
+- [x] Persist practice-setting preferences
 - [ ] Expand latency, interruption, and long-running resource tests
 - [ ] Improve assistive-technology and mobile keyboard support
 - [ ] Harden and document a public self-hosted deployment
@@ -221,3 +221,7 @@ Project repository: [Mr-Ankitpandey/TypeSpeed](https://github.com/Mr-Ankitpandey
 ## License
 
 Copyright © 2026 **Ankit Pandey**. Released under the [MIT License](LICENSE). Third-party dependencies retain their respective licenses.
+
+### Core feature completion
+
+Per-test speed charts include an accessible data table. Live race standings update their rank order during the race. A native text-input field supports mobile keyboard entry and Backspace corrections without enabling paste.

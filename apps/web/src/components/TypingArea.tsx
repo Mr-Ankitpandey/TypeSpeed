@@ -64,35 +64,73 @@ export function TypingArea({
     [passage, typed],
   );
   return (
-    <div
-      className={`typing-area ${disabled ? 'disabled' : ''}`}
-      ref={area}
-      tabIndex={disabled ? -1 : 0}
-      role="textbox"
-      aria-label="Typing passage"
-      aria-multiline="true"
-      aria-disabled={disabled}
-      onPaste={(e) => e.preventDefault()}
-      onDrop={(e) => e.preventDefault()}
-      onKeyDown={(e) => {
-        if (
-          disabled ||
-          e.ctrlKey ||
-          e.altKey ||
-          e.metaKey ||
-          e.nativeEvent.isComposing
-        )
-          return;
-        if (e.key === 'Backspace') {
-          e.preventDefault();
-          onOperation({ kind: 'delete' });
-        } else if (/^[\x20-\x7e]$/.test(e.key)) {
-          e.preventDefault();
-          onOperation({ kind: 'insert', char: e.key });
-        }
-      }}
-    >
-      {characters}
-    </div>
+    <>
+      <div
+        className={`typing-area ${disabled ? 'disabled' : ''}`}
+        ref={area}
+        tabIndex={disabled ? -1 : 0}
+        role="textbox"
+        aria-label="Typing passage"
+        aria-multiline="true"
+        aria-disabled={disabled}
+        onPaste={(e) => e.preventDefault()}
+        onDrop={(e) => e.preventDefault()}
+        onKeyDown={(e) => {
+          if (
+            disabled ||
+            e.target instanceof HTMLTextAreaElement ||
+            e.ctrlKey ||
+            e.altKey ||
+            e.metaKey ||
+            e.nativeEvent.isComposing
+          )
+            return;
+          if (e.key === 'Backspace') {
+            e.preventDefault();
+            onOperation({ kind: 'delete' });
+          } else if (/^[\x20-\x7e]$/.test(e.key)) {
+            e.preventDefault();
+            onOperation({ kind: 'insert', char: e.key });
+          }
+        }}
+      >
+        {characters}
+      </div>
+      <textarea
+        className="mobile-typing-input"
+        aria-label="Mobile typing input"
+        placeholder="Tap here to open your keyboard"
+        defaultValue={'\u200b'}
+        disabled={disabled}
+        autoCapitalize="off"
+        autoCorrect="off"
+        spellCheck={false}
+        onPaste={(e) => e.preventDefault()}
+        onDrop={(e) => e.preventDefault()}
+        onInput={(e) => {
+          const event = e.nativeEvent as InputEvent;
+          if (event.isComposing) return;
+          if (event.inputType === 'deleteContentBackward')
+            onOperation({ kind: 'delete' });
+          else if (
+            event.inputType !== 'insertFromPaste' &&
+            event.inputType !== 'insertFromDrop'
+          ) {
+            for (const char of (
+              event.data ?? e.currentTarget.value.replace(/\u200b/g, '')
+            ).slice(0, 32))
+              if (/^[\x20-\x7e]$/.test(char))
+                onOperation({ kind: 'insert', char });
+          }
+          e.currentTarget.value = '\u200b';
+        }}
+        onCompositionEnd={(e) => {
+          for (const char of e.data.slice(0, 32))
+            if (/^[\x20-\x7e]$/.test(char))
+              onOperation({ kind: 'insert', char });
+          e.currentTarget.value = '\u200b';
+        }}
+      />
+    </>
   );
 }

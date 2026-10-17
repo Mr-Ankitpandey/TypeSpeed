@@ -484,7 +484,9 @@ export class RoomService {
         score: score(p.typing, room.passage ?? '', elapsed),
       };
     });
-    const ranked = room.state === 'FINISHED' ? rankPlayers(players) : players;
+    const ranked = ['RACING', 'FINISHED'].includes(room.state)
+      ? rankPlayers(players)
+      : players;
     for (const id of room.members) {
       const p = this.sessions.get(id)!;
       if (!p.socket) continue;

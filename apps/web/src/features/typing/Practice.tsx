@@ -18,12 +18,21 @@ import {
 } from '@typespeed/typing-engine';
 import { TypingArea } from '../../components/TypingArea';
 import { readHistory, saveStored, type Result } from '../../lib/storage';
+import { readPreferences } from '../../lib/preferences';
+import {
+  PerformanceChart,
+  type Sample,
+} from '../../components/PerformanceChart';
 
 export function Practice() {
-  const [duration, setDuration] = useState(30);
-  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
-  const [punctuation, setPunctuation] = useState(false);
-  const [numbers, setNumbers] = useState(false);
+  const [preferences] = useState(readPreferences);
+  const [duration, setDuration] = useState<number>(preferences.duration);
+  const [difficulty, setDifficulty] = useState<Difficulty>(
+    preferences.difficulty,
+  );
+  const [punctuation, setPunctuation] = useState(preferences.punctuation);
+  const [numbers, setNumbers] = useState(preferences.numbers);
+  const samples = useRef<Sample[]>([]);
   const [passage, setPassage] = useState(() =>
     generatePassage({ difficulty, punctuation, numbers }),
   );
@@ -41,9 +50,16 @@ export function Practice() {
     setState(stateRef.current);
     setElapsed(0);
     setResult(null);
+    samples.current = [];
     setPassage(generatePassage({ difficulty, punctuation, numbers }));
   };
   useEffect(() => {
+    saveStored('typespeed.practice', {
+      duration,
+      difficulty,
+      punctuation,
+      numbers,
+    });
     reset(); /* A configuration change begins a fresh test. */
   }, [duration, difficulty, punctuation, numbers]);
   const finish = () => {
@@ -55,6 +71,14 @@ export function Practice() {
       date: new Date().toISOString(),
       duration,
       difficulty,
+      samples: [
+        ...samples.current,
+        {
+          seconds: duration,
+          ...score(stateRef.current, passage, duration),
+          characters: stateRef.current.typed.length,
+        },
+      ],
     };
     setResult(next);
     setElapsed(duration);
@@ -67,6 +91,15 @@ export function Practice() {
       if (started.current !== null && !ended.current) {
         const next = (performance.now() - started.current) / 1000;
         setElapsed(Math.min(next, duration));
+        if (
+          next < duration &&
+          Math.floor(next) > (samples.current.at(-1)?.seconds ?? 0)
+        )
+          samples.current.push({
+            seconds: Math.floor(next),
+            ...score(stateRef.current, passage, next),
+            characters: stateRef.current.typed.length,
+          });
         if (next >= duration) finish();
       }
     }, 100);
@@ -161,6 +194,7 @@ export function Practice() {
             <p>
               {duration} seconds · {difficulty} · {result.backspaces} backspaces
             </p>
+            <PerformanceChart samples={result.samples ?? []} />
             <button className="primary" onClick={reset}>
               Try again <RotateCcw size={16} />
             </button>

@@ -1,9 +1,11 @@
 import type { Score } from '@typespeed/typing-engine';
+import type { Sample } from '../components/PerformanceChart';
 export type Result = Score & {
   id: string;
   date: string;
   duration: number;
   difficulty: string;
+  samples?: Sample[];
 };
 export function readStored<T>(
   key: string,
