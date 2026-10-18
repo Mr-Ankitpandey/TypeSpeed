@@ -41,6 +41,7 @@ export function TypingArea({
 }) {
   const cursor = useRef<HTMLSpanElement>(null);
   const area = useRef<HTMLDivElement>(null);
+  const input = useRef<HTMLTextAreaElement>(null);
   const composed = useRef<string | null>(null);
   useEffect(() => {
     if (cursor.current && area.current)
@@ -67,7 +68,7 @@ export function TypingArea({
     [passage, typed],
   );
   return (
-    <>
+    <div className="typing-surface">
       <div
         className={`typing-area ${disabled ? 'disabled' : ''}`}
         ref={area}
@@ -76,6 +77,12 @@ export function TypingArea({
         aria-label="Typing passage"
         aria-multiline="true"
         aria-disabled={disabled}
+        onClick={() => {
+          if (!disabled) input.current?.focus({ preventScroll: true });
+        }}
+        onFocus={() => {
+          if (!disabled) input.current?.focus({ preventScroll: true });
+        }}
         onPaste={(e) => e.preventDefault()}
         onDrop={(e) => e.preventDefault()}
         onKeyDown={(e) => {
@@ -103,9 +110,10 @@ export function TypingArea({
         {characters}
       </div>
       <textarea
+        ref={input}
+        tabIndex={-1}
         className="mobile-typing-input"
         aria-label="Mobile typing input"
-        placeholder="Tap here to open your keyboard"
         defaultValue={'\u200b'}
         disabled={disabled}
         autoCapitalize="off"
@@ -154,6 +162,6 @@ export function TypingArea({
           e.currentTarget.value = '\u200b';
         }}
       />
-    </>
+    </div>
   );
 }

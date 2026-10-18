@@ -45,3 +45,9 @@ Build verification checks prerendered content, unique titles, canonical policy, 
 The offline test found two issues that were corrected: route prefetches now request the exact prerendered HTML file, and static assets are looked up by canonical path so Origin-dependent request headers cannot prevent a cache hit. Replay seeking reaches the final millisecond, composition commits normalized accented input once, and survival deadlines remain authoritative when a background timer resumes late.
 
 This remains an undeployed local release. Browser automation uses Chromium; it does not establish physical-device IME compatibility, assistive-technology conformance, production load capacity or public-hosting security. Local scores and shared asynchronous challenges are unverified. Global accounts, cross-device sync and permanent leaderboards are outside the account-free release.
+
+# Navigation, materials and passage input refinement
+
+The header/footer redesign and unified glass palette passed strict TypeScript and scoped ESLint checks. Manual browser automation verified navigation at 320–1440px, mobile menu dismissal and Escape focus restoration, dark/light layouts, reduced-transparency solid fills and theme-color changes. Existing layout, arcade/studio, long-passage scrolling, native correction/paste rejection, multiline and composition-input checks passed. The broad arcade check exceeded its time budget during a concurrent build and passed when rerun alone.
+
+The passage now focuses visually hidden native input instead of showing a separate empty field. The accented-input test was updated to remove its obsolete second-field step: the challenge now completes from the passage itself. Enter, accents, composition and scrolling passed after that change. Desktop/mobile rendering was visually inspected; no real-device keyboard certification or frame-rate benchmark is claimed.

@@ -81,9 +81,7 @@ test('multiline code supports Enter and accented input records once', async ({
   await page.getByRole('textbox', { name: 'Typing passage' }).focus();
   await page.keyboard.type('caf');
   await page.keyboard.insertText('é');
-  // Physical key events and the native mobile field have separate browser paths.
-  await page.getByRole('textbox', { name: 'Mobile typing input' }).focus();
-  await page.keyboard.insertText('é');
+  // The passage now routes physical and native input through one capture field.
   await expect(
     page.getByText('CHALLENGE COMPLETE · LOCAL RESULT'),
   ).toBeVisible();

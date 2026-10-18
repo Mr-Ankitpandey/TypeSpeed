@@ -27,7 +27,12 @@ test('native text input inserts once, corrects with backspace, and rejects paste
 }) => {
   await page.goto('/');
   const input = page.getByRole('textbox', { name: 'Mobile typing input' });
-  await input.focus();
+  await page.getByRole('textbox', { name: 'Typing passage' }).click();
+  await expect(input).toBeFocused();
+  await expect(input).toHaveCSS('opacity', '0');
+  await expect(
+    page.locator('.typing-area .correct, .typing-area .incorrect'),
+  ).toHaveCount(0);
   await page.keyboard.type('abc');
   await expect(
     page.locator('.typing-area .correct, .typing-area .incorrect'),
