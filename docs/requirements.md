@@ -16,7 +16,7 @@ Support 15-, 30-, 60-, and 120-second tests, easy/medium/hard English content, p
 
 Store recent results locally and display best/average speed, average accuracy, total tests, and recent progress. Handle unavailable or full browser storage gracefully. Keep text readable, input responsive, and controls keyboard-accessible. Support light/dark themes and reduced-motion preferences.
 
-Persisted practice-setting preferences and mobile virtual-keyboard input remain planned; do not describe them as implemented.
+Practice-setting preferences persist in browser storage. A native input field supports mobile virtual keyboards; device-specific behavior still needs physical-device testing.
 
 ## Private multiplayer
 

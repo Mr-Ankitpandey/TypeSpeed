@@ -288,6 +288,22 @@ export function Practice() {
           <ArrowRight size={20} />
         </a>
       </div>
+      <section className="practice-intro">
+        <h2>Free typing speed test and daily practice</h2>
+        <p>
+          Measure words per minute and accuracy in 15, 30, 60 or 120 seconds.
+          Choose a difficulty, practice punctuation and numbers, and compare
+          your results over time. No registration is required: your solo
+          practice history stays in this browser.
+        </p>
+        <p>
+          TypeSpeed counts corrected mistakes in accuracy and uses correctly
+          retained characters for validated WPM.{' '}
+          <a href="/learn/typing-speed">Learn how WPM is calculated</a>, or read
+          our <a href="/learn/accuracy">typing accuracy guide</a> before your
+          next session.
+        </p>
+      </section>
     </>
   );
 }

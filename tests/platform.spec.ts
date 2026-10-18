@@ -25,6 +25,18 @@ test('desktop and mobile layouts stay within the viewport', async ({
     path: 'test-results/practice-mobile.png',
     fullPage: true,
   });
+  await page.getByRole('button', { name: 'Toggle theme' }).click();
+  await expect(page.locator('.app')).toHaveClass(/light/);
+  await page.screenshot({
+    path: 'test-results/practice-light-mobile.png',
+    fullPage: true,
+  });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/multiplayer');
+  await page.screenshot({
+    path: 'test-results/multiplayer-light.png',
+    fullPage: true,
+  });
 });
 test('typing scroll follows the cursor through a long passage', async ({
   page,

@@ -20,7 +20,9 @@ A free, open-source typing practice and private multiplayer platform by **[Ankit
 - **Immediate feedback:** correct/incorrect character highlighting, visible caret, automatic scrolling, Backspace corrections, and restart.
 - **Performance metrics:** live WPM and accuracy; completed results include validated WPM, raw WPM, correct characters, incorrect attempts, uncorrected errors, and backspaces.
 - **Local analytics:** recent sessions, best and average WPM, average accuracy, completed-test count, and a recent-speed chart.
-- **Personal appearance:** dark and light themes, with the theme saved in the browser.
+- **Personal appearance:** premium glass panels, ambient gradients, and dark/light themes saved in the browser.
+- **Practice preferences:** duration, difficulty, punctuation, and number settings survive reloads.
+- **Session charts:** per-test speed graphs with accessible data tables.
 - **Independent operation:** solo practice does not need the multiplayer backend.
 
 ### Private multiplayer
@@ -39,7 +41,11 @@ A free, open-source typing practice and private multiplayer platform by **[Ankit
 
 ### Interface and privacy
 
-Responsive layouts, keyboard-accessible controls, reduced-motion support, and local system fonts. Practice history stays in the current browser; multiplayer rooms and sessions are held in server memory. No third-party analytics or remote content service is required.
+Responsive glassmorphism layouts, keyboard-accessible controls, reduced-motion and reduced-transparency support, and local system fonts. Practice history stays in the current browser; multiplayer rooms and sessions are held in server memory. No third-party analytics or remote content service is required.
+
+### Search visibility
+
+Public pages are prerendered to readable HTML with unique titles and descriptions, share metadata, canonical URLs, structured data, a sitemap, and robots.txt. Original typing guides explain speed and accuracy. Personal pages and room links opt out of indexing. Production URL metadata is generated only when the actual domain is configured; search rankings are not guaranteed.
 
 ## Quick start
 
@@ -168,24 +174,24 @@ Tests cover corrections and scoring, rankings, authorization, approval and rejec
 
 ## Configuration and deployment
 
-| Variable          | Used by        | Default / purpose                                                                     |
-| ----------------- | -------------- | ------------------------------------------------------------------------------------- |
-| `PORT`            | Backend        | `3001`                                                                                |
-| `HOST`            | Backend        | `127.0.0.1`                                                                           |
-| `ALLOWED_ORIGINS` | Backend        | `http://127.0.0.1:5173,http://localhost:5173`; comma-separated exact frontend origins |
-| `VITE_SERVER_URL` | Frontend build | Unset: connect through the same origin; set for a separately hosted backend           |
+| Variable          | Used by        | Default / purpose                                                                                        |
+| ----------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
+| `PORT`            | Backend        | `3001`                                                                                                   |
+| `HOST`            | Backend        | `127.0.0.1`                                                                                              |
+| `ALLOWED_ORIGINS` | Backend        | `http://127.0.0.1:5173,http://localhost:5173`; comma-separated exact frontend origins                    |
+| `VITE_SERVER_URL` | Frontend build | Unset: connect through the same origin; set for a separately hosted backend                              |
+| `SITE_URL`        | Frontend build | Actual public HTTPS origin for canonical URLs and sitemap; falls back to Vercel's production project URL |
 
 Set backend variables in the process environment before starting it. The backend does not automatically load `.env` files. Vite handles frontend environment variables at development/build time.
 
 Build outputs are `apps/web/dist` and `apps/server/dist`. Production self-hosting requires static hosting with SPA fallback, a persistent Node process, and HTTPS/WebSocket proxy configuration. Local production preview on port `4173` also requires that origin in `ALLOWED_ORIGINS`.
 
-**No public hosting service is configured or required.** Free local operation does not imply guaranteed free public hosting. See the [deployment guide](docs/deployment.md) for local preview, LAN access, and self-hosting details.
+The included `vercel.json` configures frontend builds, static pages, private route indexing headers, and room routing. No public deployment has been performed. The in-memory multiplayer backend requires a persistent process. See the [SEO and Vercel guide](docs/seo.md) and [deployment guide](docs/deployment.md).
 
 ## Current limitations
 
 - Server restarts remove all rooms, guest sessions, and temporary multiplayer results.
 - Practice history stores the latest **200 tests** in the current browser. Clearing browser data removes it; cross-device sync is not implemented.
-- practice duration, difficulty, punctuation, and number preferences are also saved.
 - Input supports printable English ASCII characters and Backspace. Paste, arbitrary cursor editing, and arbitrary IME text transformations are not supported. Mobile keyboards can use the native typing input field. Native input is covered by browser tests; device-specific keyboard behavior may vary.
 - Receipt-time scoring can disadvantage high-latency connections. Rate limits detect obvious bursts but do not make browser races cheat-proof.
 - The current release targets local use and a single backend instance. Public deployment needs further operational and security hardening.
@@ -198,6 +204,8 @@ Build outputs are `apps/web/dist` and `apps/server/dist`. Production self-hostin
 - [x] Synchronized races, server-side scoring, results, and rematches
 - [x] Core automated tests and responsive interface
 - [x] Persist practice-setting preferences
+- [x] Glassmorphism interface with dark/light and accessibility preferences
+- [x] Prerendered public pages, SEO metadata, sitemap generation, and Vercel frontend configuration
 - [ ] Expand latency, interruption, and long-running resource tests
 - [ ] Improve assistive-technology and mobile keyboard support
 - [ ] Harden and document a public self-hosted deployment
@@ -210,6 +218,7 @@ Build outputs are `apps/web/dist` and `apps/server/dist`. Production self-hostin
 - [Scoring rules](docs/scoring.md)
 - [Multiplayer command and event contracts](docs/multiplayer-events.md)
 - [Deployment guide](docs/deployment.md)
+- [SEO and Vercel configuration](docs/seo.md)
 - [Verification notes](docs/verification.md)
 
 ## Author
