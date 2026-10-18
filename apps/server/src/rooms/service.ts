@@ -42,6 +42,10 @@ type Room = {
   round?: string;
   passage?: string;
   startsAt?: number;
+  legs?: Record<string, string>;
+  relayOrder?: string[];
+  relayIndex?: number;
+  cooperativeTarget?: number;
 };
 type Send = <K extends keyof ServerEvents>(
   socket: string,
@@ -314,7 +318,32 @@ export class RoomService {
       room.state = 'COUNTDOWN';
       room.round = randomUUID();
       room.passage = generatePassage(room.settings);
+      if (room.settings.mode === 'relay') {
+        room.relayOrder = [...room.members];
+        room.relayIndex = 0;
+        room.legs = {};
+        const words = room.passage.split(' ');
+        room.relayOrder.forEach((id, i) => {
+          room.legs![id] = words.slice(i * 12, (i + 1) * 12).join(' ');
+        });
+      } else {
+        room.legs = undefined;
+        room.relayOrder = undefined;
+        room.relayIndex = undefined;
+      }
       room.startsAt = this.now() + 3500;
+      room.cooperativeTarget =
+        room.settings.mode === 'relay'
+          ? Object.values(room.legs ?? {}).reduce((n, s) => n + s.length, 0)
+          : Math.ceil(
+              room.settings.duration *
+                room.members.size *
+                (room.settings.difficulty === 'hard'
+                  ? 3
+                  : room.settings.difficulty === 'medium'
+                    ? 2
+                    : 1),
+            );
       for (const id of room.members) {
         const p = this.sessions.get(id)!;
         p.typing = emptyState();
@@ -336,6 +365,9 @@ export class RoomService {
       room.passage = undefined;
       room.round = undefined;
       room.startsAt = undefined;
+      room.legs = undefined;
+      room.relayOrder = undefined;
+      room.relayIndex = undefined;
       for (const id of room.members) this.sessions.get(id)!.ready = false;
     } else if (command.type === 'input') {
       const now = this.now();
@@ -347,6 +379,11 @@ export class RoomService {
         'Input is outside the official race window.',
       );
       this.check(command.round === room.round, 'Stale race round.');
+      if (room.settings.mode === 'relay')
+        this.check(
+          room.relayOrder?.[room.relayIndex ?? 0] === session.id,
+          'Wait for your relay turn.',
+        );
       this.check(
         command.sequence === session.sequence + 1,
         'Input sequence is duplicated or out of order.',
@@ -359,9 +396,14 @@ export class RoomService {
       session.inputs.push(now);
       session.typing = applyOperation(
         session.typing,
-        room.passage!,
+        room.legs?.[session.id] ?? room.passage!,
         command.operation,
       );
+      if (
+        room.settings.mode === 'relay' &&
+        session.typing.typed === room.legs?.[session.id]
+      )
+        room.relayIndex = (room.relayIndex ?? 0) + 1;
       session.sequence = command.sequence;
       // Progress is broadcast by tick, never once per keypress.
       return { ok: true, sequence: session.sequence };
@@ -481,7 +523,7 @@ export class RoomService {
         name: p.name,
         ready: p.ready,
         connected: !!p.socket,
-        score: score(p.typing, room.passage ?? '', elapsed),
+        score: score(p.typing, room.legs?.[id] ?? room.passage ?? '', elapsed),
       };
     });
     const ranked = ['RACING', 'FINISHED'].includes(room.state)
@@ -504,9 +546,27 @@ export class RoomService {
               }))
             : [],
         round: room.round,
-        passage: room.passage,
+        passage: room.legs?.[id] ?? room.passage,
         startsAt: room.startsAt,
         serverNow: this.now(),
+        cooperative:
+          room.settings.mode === 'relay' || room.settings.mode === 'boss'
+            ? {
+                mode: room.settings.mode,
+                activeId:
+                  room.settings.mode === 'relay'
+                    ? room.relayOrder?.[room.relayIndex ?? 0]
+                    : undefined,
+                correct: players.reduce((n, p) => n + p.score.correct, 0),
+                target: room.cooperativeTarget ?? 0,
+                complete:
+                  room.settings.mode === 'relay'
+                    ? (room.relayIndex ?? 0) >=
+                      (room.relayOrder?.length ?? Infinity)
+                    : players.reduce((n, p) => n + p.score.correct, 0) >=
+                      (room.cooperativeTarget ?? Infinity),
+              }
+            : undefined,
       };
       this.send(p.socket, 'room', view);
     }

@@ -25,6 +25,7 @@ import {
   type Operation,
 } from '@typespeed/typing-engine';
 import { TypingArea } from '../../components/TypingArea';
+import { saveRecording, type TimedOperation } from '../../lib/learning';
 
 function SettingsFields({
   value,
@@ -35,6 +36,19 @@ function SettingsFields({
 }) {
   return (
     <div className="form-grid">
+      <label>
+        Room game
+        <select
+          value={value.mode ?? 'race'}
+          onChange={(e) =>
+            change({ ...value, mode: e.target.value as RoomSettings['mode'] })
+          }
+        >
+          <option value="race">Competitive race</option>
+          <option value="relay">Team relay</option>
+          <option value="boss">Co-op boss battle</option>
+        </select>
+      </label>
       <label>
         Race duration
         <select
@@ -122,6 +136,8 @@ export function Multiplayer() {
   const offset = useRef(0);
   const sequence = useRef(0);
   const round = useRef<string | undefined>(undefined);
+  const replayEvents = useRef<TimedOperation[]>([]);
+  const fullReplay = useRef(false);
   const [typing, setTyping] = useState(emptyState);
   const typingRef = useRef(typing);
   const inputBusy = useRef(false);
@@ -185,6 +201,7 @@ export function Multiplayer() {
           );
     });
     socket.on('disconnect', () => {
+      fullReplay.current = false;
       setConnected(false);
       inputQueue.current = [];
       inputBusy.current = false;
@@ -196,11 +213,35 @@ export function Multiplayer() {
     );
     socket.on('room', (next) => {
       if (next.round !== round.current) {
+        replayEvents.current = [];
+        fullReplay.current = next.state === 'COUNTDOWN';
         round.current = next.round;
         sequence.current = 0;
         typingRef.current = emptyState();
         setTyping(typingRef.current);
         inputQueue.current = [];
+      }
+      if (
+        next.state === 'FINISHED' &&
+        fullReplay.current &&
+        next.round &&
+        next.passage
+      ) {
+        fullReplay.current = false;
+        saveRecording({
+          id: next.round,
+          title: `Multiplayer ${next.settings.mode}`,
+          mode: 'multiplayer',
+          date: new Date().toISOString(),
+          passage: next.passage,
+          duration: next.settings.duration,
+          events: replayEvents.current,
+          completed: true,
+          passed:
+            typingRef.current.attempts > 0 &&
+            typingRef.current.correctAttempts / typingRef.current.attempts >=
+              0.95,
+        });
       }
       setRoom(next);
       setPending(false);
@@ -288,6 +329,17 @@ export function Multiplayer() {
           return;
         }
         sequence.current = reply.sequence!;
+        if (fullReplay.current && replayEvents.current.length < 15000)
+          replayEvents.current.push({
+            ms: Math.max(
+              replayEvents.current.at(-1)?.ms ?? 0,
+              Math.min(
+                current.settings.duration * 1000,
+                Math.max(0, Date.now() + offset.current - current.startsAt!),
+              ),
+            ),
+            op: operation,
+          });
         typingRef.current = applyOperation(
           typingRef.current,
           current.passage!,
@@ -464,6 +516,38 @@ export function Multiplayer() {
           </div>
           {racing ? (
             <div className="practice-panel">
+              {room.cooperative && (
+                <div className="panel">
+                  <h2>
+                    {room.cooperative.mode === 'boss'
+                      ? 'Co-op boss battle'
+                      : 'Team relay'}
+                  </h2>
+                  <p>
+                    {room.cooperative.correct} / {room.cooperative.target}{' '}
+                    correct characters ·{' '}
+                    {room.cooperative.complete
+                      ? 'Team goal reached!'
+                      : room.cooperative.mode === 'relay'
+                        ? `Baton: ${room.players.find((p) => p.id === room.cooperative?.activeId)?.name ?? 'Waiting'}`
+                        : 'Type together to defeat the boss before time runs out.'}
+                  </p>
+                  <progress
+                    max={Math.max(1, room.cooperative.target)}
+                    value={Math.min(
+                      room.cooperative.correct,
+                      room.cooperative.target,
+                    )}
+                  />
+                  {room.cooperative.mode === 'relay' && (
+                    <p>
+                      Each player has a 12-word leg. Correct every character to
+                      pass the baton. A disconnected runner can resume their
+                      turn.
+                    </p>
+                  )}
+                </div>
+              )}
               <div className="race-heading">
                 <h2>
                   {officialNow < room.startsAt!
@@ -479,7 +563,11 @@ export function Multiplayer() {
                 typed={typing.typed}
                 onOperation={input}
                 disabled={
-                  !connected || officialNow < room.startsAt! || remaining <= 0
+                  !connected ||
+                  officialNow < room.startsAt! ||
+                  remaining <= 0 ||
+                  (room.cooperative?.mode === 'relay' &&
+                    room.cooperative.activeId !== identity)
                 }
               />
               <p className="race-tip">
@@ -491,18 +579,25 @@ export function Multiplayer() {
             <div className="panel">
               <div className="eyebrow">RACE COMPLETE</div>
               <h2>
-                {room.players.some((p) => p.eligible)
-                  ? `${room.players
-                      .filter((p) => p.rank === 1)
-                      .map((p) => p.name)
-                      .join(
-                        ' & ',
-                      )} ${room.players.filter((p) => p.rank === 1).length > 1 ? 'win' : 'wins'}!`
-                  : 'No qualifying winner'}
+                {room.cooperative
+                  ? room.cooperative.complete
+                    ? 'Team goal achieved!'
+                    : 'Team challenge incomplete'
+                  : room.players.some((p) => p.eligible)
+                    ? `${room.players
+                        .filter((p) => p.rank === 1)
+                        .map((p) => p.name)
+                        .join(
+                          ' & ',
+                        )} ${room.players.filter((p) => p.rank === 1).length > 1 ? 'win' : 'wins'}!`
+                    : 'No qualifying winner'}
               </h2>
               <p>
-                95% accuracy is required to qualify. Scores use the full
-                official {room.settings.duration}-second duration.
+                {room.cooperative
+                  ? 'Team progress uses correctly retained characters. Individual statistics are informational.'
+                  : '95% accuracy is required to qualify.'}{' '}
+                Scores use the full official {room.settings.duration}-second
+                duration.
               </p>
               {host && (
                 <button

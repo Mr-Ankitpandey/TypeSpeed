@@ -64,6 +64,95 @@ describe('authoritative room lifecycle', () => {
     expect(view('host').state).toBe('RACING');
     expect(view('host').players[0]).toMatchObject({ name: 'Rahul', rank: 1 });
   });
+  it('enforces relay turns on the server and passes a completed leg', () => {
+    approve();
+    call('host', {
+      type: 'settings',
+      settings: { ...defaultSettings, mode: 'relay' },
+    });
+    call('host', { type: 'ready', ready: true });
+    call('guest', { type: 'ready', ready: true });
+    call('host', { type: 'start' });
+    const room = view('host');
+    now = room.startsAt!;
+    service.tick();
+    expect(
+      call('guest', {
+        type: 'input',
+        round: room.round!,
+        sequence: 1,
+        operation: { kind: 'insert', char: 'a' },
+      }).ok,
+    ).toBe(false);
+    let sequence = 0;
+    for (const char of room.passage!) {
+      now += 40;
+      expect(
+        call('host', {
+          type: 'input',
+          round: room.round!,
+          sequence: ++sequence,
+          operation: { kind: 'insert', char },
+        }).ok,
+      ).toBe(true);
+    }
+    service.tick();
+    expect(view('guest').cooperative?.activeId).toBe(
+      view('guest').players.find((p) => p.name === 'Rahul')?.id,
+    );
+    expect(
+      call('host', {
+        type: 'input',
+        round: room.round!,
+        sequence: ++sequence,
+        operation: { kind: 'delete' },
+      }).ok,
+    ).toBe(false);
+    expect(
+      call('guest', {
+        type: 'input',
+        round: room.round!,
+        sequence: 1,
+        operation: { kind: 'insert', char: view('guest').passage![0] },
+      }).ok,
+    ).toBe(true);
+  });
+  it('counts only correctly retained characters toward the boss goal', () => {
+    approve();
+    call('host', {
+      type: 'settings',
+      settings: { ...defaultSettings, mode: 'boss' },
+    });
+    call('host', { type: 'ready', ready: true });
+    call('guest', { type: 'ready', ready: true });
+    call('host', { type: 'start' });
+    const room = view('host');
+    now = room.startsAt!;
+    service.tick();
+    call('host', {
+      type: 'input',
+      round: room.round!,
+      sequence: 1,
+      operation: { kind: 'insert', char: room.passage![0] },
+    });
+    call('guest', {
+      type: 'input',
+      round: room.round!,
+      sequence: 1,
+      operation: { kind: 'insert', char: '~' },
+    });
+    service.tick();
+    expect(view('host').cooperative?.correct).toBe(1);
+    expect(view('host').cooperative?.target).toBe(120);
+    call('host', {
+      type: 'input',
+      round: room.round!,
+      sequence: 2,
+      operation: { kind: 'delete' },
+    });
+    service.tick();
+    expect(view('host').cooperative?.correct).toBe(0);
+  });
   it('keeps pending players outside protected broadcasts and rejects host impersonation', () => {
     const guest = join();
     expect(view('guest')).toBeUndefined();

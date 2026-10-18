@@ -7,6 +7,7 @@ export const settingsSchema = z
     maxPlayers: z.number().int().min(2).max(8),
     punctuation: z.boolean(),
     numbers: z.boolean(),
+    mode: z.enum(['race', 'relay', 'boss']).default('race'),
   })
   .strict();
 export type RoomSettings = z.infer<typeof settingsSchema>;
@@ -16,6 +17,7 @@ export const defaultSettings: RoomSettings = {
   maxPlayers: 4,
   punctuation: false,
   numbers: false,
+  mode: 'race',
 };
 const name = z
   .string()
@@ -88,6 +90,13 @@ export type RoomView = {
   passage?: string;
   startsAt?: number;
   serverNow: number;
+  cooperative?: {
+    mode: 'relay' | 'boss';
+    activeId?: string;
+    correct: number;
+    target: number;
+    complete: boolean;
+  };
 };
 export type Reply =
   | {
