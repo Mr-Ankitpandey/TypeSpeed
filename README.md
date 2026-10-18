@@ -4,9 +4,9 @@
 
 A free, open-source typing practice and private multiplayer platform by **[Ankit Pandey](https://github.com/Mr-Ankitpandey)**. Start typing without an account, track your progress on your device, or invite friends to a host-approved race.
 
-[Features](#features) · [Quick start](#quick-start) · [Multiplayer](#how-multiplayer-works) · [Architecture](#project-structure) · [Documentation](#documentation)
+[**Launch TypeSpeed ↗**](https://typespeed-a.vercel.app/) · [Features](#features) · [Quick start](#quick-start) · [Multiplayer](#how-multiplayer-works) · [Documentation](#documentation)
 
-> **Status: local release.** Solo practice, learning challenges, arcade games and private competitive/cooperative multiplayer are implemented and tested. Public deployment hardening and broader device support are still on the roadmap. No database, paid API, or managed service is required to run the application.
+> **Live app:** [typespeed-a.vercel.app](https://typespeed-a.vercel.app/). The frontend is hosted on Vercel; multiplayer uses a separate persistent backend. No account, database or paid API is required by the application. Public hosting may have provider usage limits.
 
 ![TypeSpeed typing practice interface](docs/images/typing-practice.png)
 
@@ -17,7 +17,7 @@ A free, open-source typing practice and private multiplayer platform by **[Ankit
 - **Timed tests:** 15, 30, 60, and 120 seconds.
 - **Three difficulty levels:** easy, medium, and hard, using bundled English word banks.
 - **Content options:** optional punctuation and numbers.
-- **Immediate feedback:** correct/incorrect character highlighting, visible caret, automatic scrolling, Backspace corrections, and restart.
+- **Click-to-type passage:** click or tap the words to focus the caret; the timer starts with the first keystroke. Correct/incorrect character highlighting, automatic scrolling, Backspace corrections and restart are built in, without a separate visible input box.
 - **Performance metrics:** live WPM and accuracy; completed results include validated WPM, raw WPM, correct characters, incorrect attempts, uncorrected errors, and backspaces.
 - **Local analytics:** recent sessions, best and average WPM, average accuracy, completed-test count, and a recent-speed chart.
 - **Personal appearance:** premium glass panels, ambient gradients, and dark/light themes saved in the browser.
@@ -41,7 +41,7 @@ A free, open-source typing practice and private multiplayer platform by **[Ankit
 
 ### Interface and privacy
 
-Responsive glassmorphism layouts, keyboard-accessible controls, reduced-motion and reduced-transparency support, and local system fonts. Practice history stays in the current browser; multiplayer rooms and sessions are held in server memory. No third-party analytics or remote content service is required.
+Responsive glassmorphism layouts with a unified dark/light material system, desktop navigation, a mobile menu and grouped footer links. Keyboard-accessible controls, reduced-motion and reduced-transparency support, and local system fonts keep practice focused. Practice history stays in the current browser; multiplayer rooms and sessions are held in server memory. No third-party analytics or remote content service is required.
 
 ### Challenges, learning and arcade
 
@@ -145,6 +145,7 @@ TypeSpeed/
 │   │       ├── lib/                 # Browser storage helpers
 │   │       ├── App.tsx              # Routes, analytics, settings, app shell
 │   │       ├── main.tsx             # Browser entry and offline registration
+│   │       ├── materials.css        # Shared dark/light glass tokens
 │   │       └── styles.css
 │   └── server/
 │       └── src/
@@ -205,15 +206,19 @@ Set backend variables in the process environment before starting it. The backend
 
 Build outputs are `apps/web/dist` and `apps/server/dist`. Production self-hosting requires static hosting with SPA fallback, a persistent Node process, and HTTPS/WebSocket proxy configuration. Local production preview on port `4173` also requires that origin in `ALLOWED_ORIGINS`.
 
-The included `vercel.json` configures frontend builds, static pages, private route indexing headers, and room routing. No public deployment has been performed. The in-memory multiplayer backend requires a persistent process. See the [SEO and Vercel guide](docs/seo.md) and [deployment guide](docs/deployment.md).
+The public frontend is [https://typespeed-a.vercel.app/](https://typespeed-a.vercel.app/). The included `vercel.json` configures frontend builds, static pages, private route indexing headers and room routing. Import the repository root (`./`) on Vercel with the **Other** preset; the tracked configuration builds only the web workspace.
+
+For this deployment, set `SITE_URL=https://typespeed-a.vercel.app` and `VITE_SERVER_URL` to the actual backend HTTPS origin, then redeploy the frontend. On Render, run the backend as one Node web service from the repository root: build with `npm ci --include=dev && npm run build -w @typespeed/server`, and start with `npm run start -w @typespeed/server`. Set `HOST=0.0.0.0`, `NODE_ENV=production`, `NODE_VERSION=24` and `ALLOWED_ORIGINS=https://typespeed-a.vercel.app`; use `/health` for the health check and the provider-supplied `PORT`. The backend root `/` has no page and returns 404 by design.
+
+The in-memory multiplayer backend requires one persistent process. Restarts erase active rooms; hosting plans that sleep can delay the first connection. See the [SEO and Vercel guide](docs/seo.md) and [deployment guide](docs/deployment.md) for configuration details.
 
 ## Current limitations
 
 - Server restarts remove all rooms, guest sessions, and temporary multiplayer results.
 - Practice history stores the latest **200 tests** in the current browser. Clearing browser data removes it; cross-device sync is not implemented.
-- Solo input supports printable Latin characters and accents, with newline input in Code Sprint. Multiplayer passages remain English ASCII. Paste and arbitrary cursor editing are disabled. Mobile keyboards can use the native input field; physical-device and input-method behavior may vary.
+- Solo input supports printable Latin characters and accents, with newline input in Code Sprint. Multiplayer passages remain English ASCII. Paste and arbitrary cursor editing are disabled. Clicking or tapping the passage focuses hidden native input for mobile keyboard support; physical-device and input-method behavior may vary.
 - Receipt-time scoring can disadvantage high-latency connections. Rate limits detect obvious bursts but do not make browser races cheat-proof.
-- The current release targets local use and a single backend instance. Public deployment needs further operational and security hardening.
+- Multiplayer supports a single backend instance. Broader load, latency, assistive-technology and physical-device testing remain ongoing work; the public release is not a formal security or accessibility certification.
 
 ## Roadmap
 
@@ -225,6 +230,8 @@ The included `vercel.json` configures frontend builds, static pages, private rou
 - [x] Persist practice-setting preferences
 - [x] Glassmorphism interface with dark/light and accessibility preferences
 - [x] Prerendered public pages, SEO metadata, sitemap generation, and Vercel frontend configuration
+- [x] Public Vercel frontend at typespeed-a.vercel.app
+- [x] Unified glass materials, premium header/footer and direct passage input
 - [ ] Expand latency, interruption, and long-running resource tests
 - [ ] Improve assistive-technology and mobile keyboard support
 - [ ] Harden and document a public self-hosted deployment
@@ -240,6 +247,7 @@ The included `vercel.json` configures frontend builds, static pages, private rou
 - [Multiplayer command and event contracts](docs/multiplayer-events.md)
 - [Deployment guide](docs/deployment.md)
 - [SEO and Vercel configuration](docs/seo.md)
+- [Interface design decisions](docs/ui-design.md)
 - [Learning, challenges and games](docs/learning-and-games.md)
 - [Verification notes](docs/verification.md)
 
@@ -249,10 +257,8 @@ The included `vercel.json` configures frontend builds, static pages, private rou
 
 Project repository: [Mr-Ankitpandey/TypeSpeed](https://github.com/Mr-Ankitpandey/TypeSpeed).
 
+Project website: [typespeed-a.vercel.app](https://typespeed-a.vercel.app/).
+
 ## License
 
 Copyright © 2026 **Ankit Pandey**. Released under the [MIT License](LICENSE). Third-party dependencies retain their respective licenses.
-
-### Core feature completion
-
-Per-test speed charts include an accessible data table. Live race standings update their rank order during the race. A native text-input field supports mobile keyboard entry and Backspace corrections without enabling paste.
