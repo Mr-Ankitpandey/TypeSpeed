@@ -1,14 +1,7 @@
 import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
-import {
-  Keyboard,
-  BarChart3,
-  Users,
-  SlidersHorizontal,
-  Sun,
-  Moon,
-  ArrowUpRight,
-} from 'lucide-react';
-import { useState } from 'react';
+import { BarChart3, ArrowUpRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { SiteHeader, SiteFooter } from './components/SiteChrome';
 import { Practice } from './features/typing/Practice';
 import { Multiplayer } from './features/multiplayer/Multiplayer';
 import { readHistory, readStored, saveStored } from './lib/storage';
@@ -131,6 +124,11 @@ export function App() {
       (v): v is boolean => typeof v === 'boolean',
     ),
   );
+  useEffect(() => {
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', light ? '#edf2f8' : '#0b1120');
+  }, [light]);
   function toggleTheme() {
     setLight(!light);
     saveStored('typespeed.light', !light);
@@ -141,48 +139,12 @@ export function App() {
       <a href="#main-content" className="skip-link">
         Skip to content
       </a>
-      <header>
-        <NavLink to="/" className="brand">
-          <span className="brand-icon">
-            <Keyboard size={22} />
-          </span>
-          type<span>speed</span>
-          <small>BETA</small>
-        </NavLink>
-        <nav aria-label="Main navigation">
-          <NavLink to="/" end>
-            <Keyboard size={16} />
-            Practice
-          </NavLink>
-          <NavLink to="/multiplayer">
-            <Users size={16} />
-            Multiplayer
-          </NavLink>
-          <NavLink to="/analytics">
-            <BarChart3 size={16} />
-            My progress
-          </NavLink>
-        </nav>
-        <div className="header-actions">
-          <button
-            className="icon-button"
-            aria-label="Toggle theme"
-            onClick={toggleTheme}
-          >
-            {light ? <Moon size={19} /> : <Sun size={19} />}
-          </button>
-          <NavLink className="icon-button" aria-label="Settings" to="/settings">
-            <SlidersHorizontal size={18} />
-          </NavLink>
-        </div>
-      </header>
+      <SiteHeader
+        key={currentLocation.pathname}
+        light={light}
+        toggleTheme={toggleTheme}
+      />
       <main id="main-content">
-        <nav className="explore-nav" aria-label="Explore TypeSpeed">
-          <NavLink to="/challenges">Challenges & learning</NavLink>
-          <NavLink to="/games">Typing arcade</NavLink>
-          <NavLink to="/insights">Practice studio</NavLink>
-          <NavLink to="/replays">Replays</NavLink>
-        </nav>
         <Routes>
           <Route path="/challenges" element={<LearningHub />} />
           <Route path="/games" element={<LearningHub games />} />
@@ -258,24 +220,7 @@ export function App() {
           />
         </Routes>
       </main>
-      <footer>
-        <nav className="footer-links" aria-label="Information">
-          <NavLink to="/learn">Typing guides</NavLink>
-          <NavLink to="/about">About</NavLink>
-          <NavLink to="/privacy">Privacy</NavLink>
-          <a href="https://github.com/Mr-Ankitpandey/TypeSpeed">Source</a>
-        </nav>
-        <span className="footer-brand">
-          <Keyboard size={16} /> typespeed <span>Find your rhythm.</span>
-        </span>
-        <span>
-          Free & open source <span className="footer-dot">•</span> Built for the
-          love of typing
-        </span>
-        <span className="local-label">
-          <span className="live-dot" /> LOCAL FIRST
-        </span>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

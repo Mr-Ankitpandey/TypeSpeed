@@ -1,24 +1,6 @@
 @import 'tailwindcss';
+@import './materials.css';
 /* Learning and arcade surfaces share the platform glass palette. */
-.explore-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding-top: 22px;
-}
-.explore-nav a {
-  padding: 8px 12px;
-  border: 1px solid var(--line);
-  border-radius: 20px;
-  font-size: 12px;
-}
-.explore-nav a.active {
-  background: var(--surface);
-  color: var(--accent);
-}
-.explore-nav a.active:after {
-  display: none;
-}
 .activity-grid {
   margin-bottom: 24px;
   display: grid;
@@ -241,7 +223,7 @@ input[type='range'] {
 :root {
   font-family: 'Segoe UI', Arial, sans-serif;
   color: #edeeef;
-  background: #101113;
+  background: #0b1120;
   font-synthesis: none;
 }
 * {
@@ -291,29 +273,7 @@ button {
   color: inherit;
   background: transparent;
 }
-.app {
-  --bg: #101113;
-  --panel: #161719;
-  --surface: #1d1f21;
-  --line: #292b2e;
-  --text: #edeeef;
-  --muted: #8e9298;
-  --faint: #5f646b;
-  --accent: #d8f36a;
-  min-height: 100vh;
-  background: var(--bg);
-  color: var(--text);
-}
-.light {
-  --bg: #f5f5f0;
-  --panel: #fff;
-  --surface: #ebede5;
-  --line: #dfe1d9;
-  --text: #20241d;
-  --muted: #62695d;
-  --faint: #7c8476;
-  --accent: #557900;
-}
+
 header {
   max-width: 1280px;
   margin: auto;
@@ -544,7 +504,7 @@ h3 {
   margin: 0 9px;
 }
 .typing-area {
-  font-family: Consolas, 'Courier New', monospace;
+  font-family: var(--font-mono);
   font-size: 25px;
   line-height: 1.85;
   letter-spacing: 0.4px;
@@ -659,8 +619,8 @@ kbd {
   flex-shrink: 0;
 }
 .card-symbol {
-  background: #d8f3100a;
-  border: 1px solid #d8f32a24;
+  background: var(--glass-chip);
+  border: 1px solid var(--line);
   color: var(--accent);
   padding: 8px 12px;
   border-radius: 9px;
@@ -1217,44 +1177,7 @@ summary {
   font-size: 16px;
 }
 
-/* Shared glass surfaces keep every workspace visually consistent. */
-.app {
-  --bg: #0b1120;
-  --panel: rgb(23 33 53 / 76%);
-  --surface: rgb(155 183 221 / 10%);
-  --line: rgb(185 209 245 / 16%);
-  --text: #eff5ff;
-  --muted: #aabbd3;
-  --faint: #91a4bf;
-  --accent: #9cebd9;
-  background:
-    radial-gradient(ellipse at 8% 6%, rgb(48 111 143 / 27%), transparent 40rem),
-    radial-gradient(
-      ellipse at 92% 30%,
-      rgb(102 76 172 / 23%),
-      transparent 42rem
-    ),
-    radial-gradient(
-      ellipse at 45% 100%,
-      rgb(29 115 110 / 16%),
-      transparent 40rem
-    ),
-    var(--bg);
-  isolation: isolate;
-}
-.app.light {
-  --bg: #edf2f8;
-  --panel: rgb(255 255 255 / 76%);
-  --surface: rgb(53 91 137 / 7%);
-  --line: rgb(49 78 117 / 18%);
-  --text: #172a40;
-  --muted: #4d6179;
-  --faint: #536a82;
-  --accent: #086b61;
-  background:
-    radial-gradient(ellipse at 8% 6%, #c4e9eb, transparent 40rem),
-    radial-gradient(ellipse at 92% 30%, #ded6f7, transparent 42rem), var(--bg);
-}
+/* Shared component surfaces. */
 header {
   height: 82px;
   max-width: 1220px;
@@ -1262,8 +1185,8 @@ header {
   border: 1px solid var(--line);
   border-radius: 22px;
   background: var(--panel);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(32px) saturate(150%);
+  -webkit-backdrop-filter: blur(32px) saturate(150%);
   box-shadow:
     0 12px 45px rgb(0 0 0 / 10%),
     inset 0 1px rgb(255 255 255 / 8%);
@@ -1315,8 +1238,8 @@ h1 {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 22px;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow:
     0 18px 50px rgb(0 0 0 / 12%),
     inset 0 1px rgb(255 255 255 / 8%);
@@ -1351,7 +1274,7 @@ h1 {
 .mobile-typing-input,
 input,
 select {
-  background: color-mix(in srgb, var(--bg) 65%, transparent);
+  background: var(--glass-well);
   border-radius: 11px;
   box-shadow: inset 0 1px 3px rgb(0 0 0 / 6%);
 }
@@ -1524,4 +1447,538 @@ footer {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
+}
+/* Global navigation and editorial footer. */
+.site-header {
+  display: block;
+  height: auto;
+  padding: 0;
+  width: calc(100% - 40px);
+  max-width: 1220px;
+  margin: 20px auto 0;
+  overflow: hidden;
+}
+.site-header-top {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 22px 28px;
+}
+.site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  color: var(--text);
+  font-size: 25px;
+  font-weight: 750;
+  letter-spacing: -1px;
+}
+.site-brand > span > span {
+  color: var(--accent);
+}
+.site-brand small {
+  display: block;
+  font-size: 8px;
+  font-weight: 500;
+  letter-spacing: 2.2px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.site-mark {
+  display: grid;
+  place-items: center;
+  width: 47px;
+  height: 47px;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 14px;
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--accent) 18%, transparent),
+    var(--surface)
+  );
+  box-shadow:
+    inset 0 1px 0 #ffffff25,
+    0 6px 20px #00000015;
+  transform: rotate(-5deg);
+}
+.site-mark svg {
+  transform: rotate(5deg);
+}
+.site-header .desktop-primary {
+  margin-left: auto;
+  gap: 4px;
+}
+.site-header .desktop-primary a {
+  font-size: 13px;
+  padding: 13px 15px;
+  border: 1px solid transparent;
+}
+.site-header .desktop-primary a.active {
+  border-color: var(--line);
+  box-shadow: inset 0 1px #ffffff0a;
+}
+.site-tools {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding-left: 16px;
+  border-left: 1px solid var(--line);
+  color: var(--muted);
+}
+.site-tools .icon-button {
+  min-width: 40px;
+  min-height: 40px;
+}
+.site-header-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-top: 1px solid var(--line);
+  padding: 11px 28px;
+  background: color-mix(in srgb, var(--surface) 45%, transparent);
+}
+.header-note {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.site-header-bottom nav {
+  gap: 22px;
+}
+.site-header-bottom nav a {
+  padding: 4px 0;
+  font-size: 11px;
+  border-radius: 0;
+}
+.site-header-bottom nav a.active,
+.site-header-bottom nav a:hover {
+  background: transparent;
+  color: var(--accent);
+}
+.site-header .mobile-menu-toggle,
+.site-header .mobile-navigation {
+  display: none;
+}
+.site-footer {
+  display: block;
+  width: calc(100% - 40px);
+  max-width: 1220px;
+  margin: 0 auto 24px;
+  padding: 0 38px;
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background:
+    linear-gradient(
+      120deg,
+      color-mix(in srgb, var(--accent) 5%, transparent),
+      transparent 55%
+    ),
+    var(--panel);
+  box-shadow: inset 0 1px #ffffff0a;
+  color: var(--muted);
+}
+.footer-invitation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 38px 0;
+  border-bottom: 1px solid var(--line);
+}
+.footer-invitation h2 {
+  font-size: clamp(26px, 3vw, 36px);
+  line-height: 1.2;
+  letter-spacing: -1.2px;
+  color: var(--text);
+  margin: 14px 0 0;
+}
+.footer-invitation em {
+  font-style: normal;
+  color: var(--accent);
+}
+.footer-invitation .primary {
+  flex-shrink: 0;
+}
+.footer-directory {
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 1fr 1fr;
+  gap: 32px;
+  padding: 38px 0 42px;
+}
+.footer-intro p {
+  max-width: 260px;
+  font-size: 13px;
+  margin: 20px 0;
+}
+.footer-pill {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+.site-footer nav {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: flex-start;
+}
+.site-footer nav h3 {
+  font-size: 12px;
+  color: var(--text);
+  font-weight: 650;
+  margin: 4px 0 6px;
+  letter-spacing: 0;
+}
+.site-footer nav a {
+  font-size: 12px;
+  padding: 0;
+  line-height: 1.6;
+}
+.site-footer a:hover {
+  color: var(--accent);
+}
+.site-footer nav a.active:after {
+  display: none;
+}
+.footer-colophon {
+  border-top: 1px solid var(--line);
+  padding: 22px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 10px;
+  line-height: 1.8;
+}
+.footer-colophon > span,
+.footer-colophon a {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.footer-colophon > span:first-child a {
+  color: var(--text);
+}
+@media (max-width: 1050px) {
+  .site-header-top {
+    gap: 16px;
+    padding: 20px;
+  }
+  .site-header .desktop-primary a {
+    padding: 12px 10px;
+  }
+  .site-header .desktop-primary svg {
+    display: none;
+  }
+  .site-tools {
+    padding-left: 10px;
+  }
+  .footer-directory {
+    grid-template-columns: 1.4fr 1fr 1fr;
+  }
+  .footer-intro {
+    grid-column: 1 / -1;
+  }
+  .footer-intro p {
+    max-width: 400px;
+  }
+}
+@media (max-width: 760px) {
+  .site-header {
+    width: calc(100% - 24px);
+    margin: 12px auto 0;
+    border-radius: 18px;
+  }
+  .site-header-top {
+    padding: 16px;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .site-brand {
+    font-size: 23px;
+    gap: 10px;
+  }
+  .site-brand small {
+    font-size: 7px;
+    letter-spacing: 1.7px;
+  }
+  .site-mark {
+    width: 40px;
+    height: 42px;
+    border-radius: 12px;
+  }
+  .site-header .desktop-primary,
+  .site-header-bottom {
+    display: none;
+  }
+  .site-tools {
+    border: 0;
+    padding: 0;
+    gap: 0;
+  }
+  .site-tools .icon-button {
+    min-width: 36px;
+    padding: 8px;
+  }
+  .site-header .mobile-menu-toggle {
+    display: inline-flex;
+  }
+  .site-header .mobile-navigation:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    padding: 20px;
+    border-top: 1px solid var(--line);
+    gap: 18px;
+  }
+  .mobile-primary-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .site-header .mobile-navigation a {
+    font-size: 12px;
+    padding: 13px 10px;
+  }
+  .mobile-primary-links a {
+    border: 1px solid var(--line);
+  }
+  .mobile-primary-links a svg:last-child {
+    margin-left: auto;
+  }
+  .mobile-personal-links {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+    border-top: 1px solid var(--line);
+    padding-top: 10px;
+  }
+  .site-footer {
+    width: calc(100% - 24px);
+    padding: 0 24px;
+    border-radius: 20px;
+  }
+  .footer-invitation {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 28px 0;
+  }
+  .footer-directory {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px 16px;
+    padding: 30px 0;
+  }
+  .site-footer nav {
+    order: initial;
+    justify-content: flex-start;
+    width: auto;
+  }
+  .footer-colophon {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+@media (max-width: 360px) {
+  .site-header-top {
+    padding: 12px;
+  }
+  .site-brand {
+    font-size: 20px;
+    gap: 7px;
+  }
+  .site-mark {
+    width: 34px;
+  }
+  .site-brand small {
+    letter-spacing: 1px;
+  }
+}
+/* Material hierarchy: frosted chrome, translucent cards, quiet typing wells. */
+.site-header {
+  background: var(--glass-nav);
+  box-shadow:
+    var(--elevation),
+    inset 0 1px var(--edge);
+}
+.practice-panel {
+  border-radius: 26px;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--accent) 4%, transparent),
+      transparent 60%
+    ),
+    var(--glass-card);
+  box-shadow:
+    var(--elevation),
+    inset 0 1px var(--edge);
+}
+.panel,
+.feature-card {
+  box-shadow:
+    var(--elevation),
+    inset 0 1px var(--edge);
+}
+.activity-card,
+.stat-tile {
+  border-radius: 16px;
+  box-shadow: inset 0 1px var(--edge);
+}
+.stat-tile {
+  background:
+    linear-gradient(140deg, var(--glass-chip), transparent), var(--glass-card);
+}
+.typing-area {
+  background: var(--glass-well);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 16px;
+  height: 174px;
+  box-shadow: inset 0 2px 12px rgb(0 0 0 / 5%);
+}
+.typing-area:focus-visible {
+  outline: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  outline-offset: 3px;
+  border-radius: 14px;
+}
+.test-controls {
+  background: var(--glass-well);
+}
+.segmented {
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--glass-chip);
+}
+.segmented button.selected {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent);
+  box-shadow: inset 0 1px var(--edge);
+}
+.live-stats strong {
+  font-family: var(--font-mono);
+  font-size: 18px;
+}
+.custom-text,
+.mobile-typing-input,
+input,
+select {
+  background: var(--glass-well);
+}
+kbd,
+.keyboard-guide span,
+.heatmap > span,
+.achievement {
+  background: var(--glass-chip);
+  box-shadow: inset 0 1px var(--edge);
+}
+.achievement.unlocked {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+.heatmap .weak-key {
+  background: rgb(215 126 139 / 9%);
+}
+.table-wrap {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--glass-well);
+}
+thead {
+  background: var(--glass-chip);
+}
+tbody tr:hover {
+  background: var(--glass-chip);
+}
+.game-stage {
+  background:
+    radial-gradient(
+      ellipse at top,
+      color-mix(in srgb, var(--accent) 9%, transparent),
+      transparent
+    ),
+    var(--glass-well);
+  box-shadow: inset 0 1px var(--edge);
+}
+.game-ground {
+  background: var(--glass-nav);
+}
+.rally-track,
+.rhythm-stage,
+.tower-stage {
+  background: var(--glass-well);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+.game-target {
+  background: var(--glass-chip);
+  box-shadow: inset 0 1px var(--edge);
+}
+.time-track,
+.player-progress {
+  background: var(--glass-chip);
+}
+.spark-bars div,
+.time-track div,
+.player-progress > div {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--accent) 65%, transparent),
+    var(--accent)
+  );
+}
+.site-footer {
+  background:
+    linear-gradient(
+      120deg,
+      color-mix(in srgb, var(--accent) 6%, transparent),
+      transparent 60%
+    ),
+    var(--glass-card);
+  box-shadow: inset 0 1px var(--edge);
+}
+@media (max-width: 600px) {
+  .typing-area {
+    padding: 10px 12px;
+    height: 154px;
+  }
+  .practice-panel {
+    border-radius: 20px;
+  }
+}
+/* Native keyboard capture stays inside the passage surface, without a second field. */
+.typing-surface {
+  position: relative;
+}
+.typing-surface .mobile-typing-input {
+  position: absolute;
+  top: 20px;
+  left: 32px;
+  width: 1px;
+  height: 1px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  overflow: hidden;
+  resize: none;
+  pointer-events: none;
+}
+.typing-surface:not(:focus-within) .cursor:before {
+  opacity: 0;
+}
+.typing-surface:focus-within .typing-area {
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
 }

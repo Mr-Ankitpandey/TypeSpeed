@@ -1,0 +1,66 @@
+/* One palette, four materials. Nested surfaces use fills, never live blur. */
+.app {
+  --font-mono: Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --bg: #0b1120;
+  --text: #eff5ff;
+  --muted: #b4c3d9;
+  --faint: #99acc7;
+  --accent: #9cebd9;
+  --glass-nav: rgb(28 43 64 / 72%);
+  --glass-card: rgb(111 145 186 / 10%);
+  --glass-well: rgb(7 16 31 / 34%);
+  --glass-chip: rgb(174 203 239 / 8%);
+  --line: rgb(190 215 250 / 18%);
+  --edge: rgb(255 255 255 / 12%);
+  --panel: var(--glass-card);
+  --surface: var(--glass-chip);
+  --elevation: 0 16px 44px rgb(0 0 0 / 13%);
+  min-height: 100vh;
+  color: var(--text);
+  isolation: isolate;
+  background:
+    radial-gradient(ellipse at 8% 6%, rgb(48 111 143 / 30%), transparent 40rem),
+    radial-gradient(
+      ellipse at 92% 30%,
+      rgb(102 76 172 / 25%),
+      transparent 42rem
+    ),
+    radial-gradient(
+      ellipse at 45% 100%,
+      rgb(29 115 110 / 20%),
+      transparent 40rem
+    ),
+    var(--bg);
+}
+.app.light {
+  --bg: #edf2f8;
+  --text: #172a40;
+  --muted: #405670;
+  --faint: #526982;
+  --accent: #086b61;
+  --glass-nav: rgb(245 250 255 / 78%);
+  --glass-card: rgb(255 255 255 / 46%);
+  --glass-well: rgb(240 248 255 / 55%);
+  --glass-chip: rgb(255 255 255 / 35%);
+  --line: rgb(49 78 117 / 20%);
+  --edge: rgb(255 255 255 / 85%);
+  --elevation: 0 14px 38px rgb(43 69 105 / 8%);
+  background:
+    radial-gradient(ellipse at 8% 6%, #b8e2e7, transparent 40rem),
+    radial-gradient(ellipse at 92% 30%, #d2c7ef, transparent 42rem),
+    radial-gradient(ellipse at 45% 100%, #cee8df, transparent 40rem), var(--bg);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .app {
+    --glass-nav: #172135;
+    --glass-card: #172135;
+    --glass-well: #0d192b;
+    --glass-chip: #23334b;
+  }
+  .app.light {
+    --glass-nav: #f8fbff;
+    --glass-card: #f8fbff;
+    --glass-well: #edf3fa;
+    --glass-chip: #e3edf7;
+  }
+}
