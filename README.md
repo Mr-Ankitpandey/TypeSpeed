@@ -6,7 +6,7 @@ A free, open-source typing practice and private multiplayer platform by **[Ankit
 
 [Features](#features) · [Quick start](#quick-start) · [Multiplayer](#how-multiplayer-works) · [Architecture](#project-structure) · [Documentation](#documentation)
 
-> **Status: local MVP.** Solo practice and the core multiplayer flow are implemented and tested. Public deployment hardening and broader device support are still on the roadmap. No database, paid API, or managed service is required to run the application.
+> **Status: local release.** Solo practice, learning challenges, arcade games and private competitive/cooperative multiplayer are implemented and tested. Public deployment hardening and broader device support are still on the roadmap. No database, paid API, or managed service is required to run the application.
 
 ![TypeSpeed typing practice interface](docs/images/typing-practice.png)
 
@@ -42,6 +42,22 @@ A free, open-source typing practice and private multiplayer platform by **[Ankit
 ### Interface and privacy
 
 Responsive glassmorphism layouts, keyboard-accessible controls, reduced-motion and reduced-transparency support, and local system fonts. Practice history stays in the current browser; multiplayer rooms and sessions are held in server memory. No third-party analytics or remote content service is required.
+
+### Challenges, learning and arcade
+
+- **Daily trio:** seeded sprint, accuracy and punctuation challenges, with saved first/best attempts.
+- **Personal training:** mistake drills, adaptive difficulty, five-minute practice plans and ghost races against recorded performances.
+- **Skill challenges:** Clean 100, Perfect 25, Consistency Run, Punctuation Pro, Number Sprint, multiline Code Sprint and Personal Best Ladder.
+- **Solo games:** Wordfall, Precision Tower, Keyboard Defender, TypeSpeed Rally, Rhythm Flow and a branching original Story Quest.
+- **Cooperative rooms:** server-enforced Team Relay turns and shared boss battles, alongside competitive racing.
+- **Learning:** six beginner lessons, custom text, and Spanish, French and German word practice.
+- **Practice studio:** keyboard error heatmaps, slow-transition reports, achievements, flexible weekly goals, caret/font/sound settings and cosmetic accent unlocks.
+- **Replay and sharing:** playback with correction markers, full-passage friend challenges, downloadable result cards, and validated studio progress backups.
+- **Offline solo use:** production builds cache the solo application after an online visit; multiplayer still needs the backend.
+
+See [activity rules and storage boundaries](docs/learning-and-games.md) for exact behavior. Local and shared challenge scores are unverified; cooperative room outcomes are calculated by the server.
+
+![TypeSpeed typing arcade](docs/images/typing-arcade.png)
 
 ### Search visibility
 
@@ -124,9 +140,11 @@ TypeSpeed/
 │   │       ├── components/          # Reusable typing UI
 │   │       ├── features/
 │   │       │   ├── typing/          # Solo practice
+│   │       │   ├── learning/        # Challenges, arcade, studio and replays
 │   │       │   └── multiplayer/     # Room and race screens
 │   │       ├── lib/                 # Browser storage helpers
-│   │       ├── main.tsx             # Routes, analytics, settings, app shell
+│   │       ├── App.tsx              # Routes, analytics, settings, app shell
+│   │       ├── main.tsx             # Browser entry and offline registration
 │   │       └── styles.css
 │   └── server/
 │       └── src/
@@ -158,6 +176,7 @@ Run these commands from the repository root:
 | `npm run format`                     | Format project files with Prettier                        |
 | `npm test`                           | Run engine, room-service, and Socket.IO integration tests |
 | `npm run test:e2e`                   | Run Playwright browser tests                              |
+| `npm run test:offline`               | Build and test production offline solo navigation         |
 | `npm run build`                      | Type-check and build both applications                    |
 | `npm run start -w @typespeed/server` | Start the built backend                                   |
 | `npm run preview -w @typespeed/web`  | Preview the built frontend locally                        |
@@ -170,7 +189,7 @@ npm test
 npm run test:e2e
 ```
 
-Tests cover corrections and scoring, rankings, authorization, approval and rejection, capacity checks, replayed/out-of-order input, reconnection, cleanup, browser history, responsive layouts, long-passage scrolling, and a two-player race/rematch flow. See [verification notes](docs/verification.md) for the initial milestone's results and boundaries.
+Tests cover corrections and scoring, rankings, authorization, approval and rejection, capacity checks, replayed/out-of-order input, reconnection, cleanup, browser history, responsive layouts, long-passage scrolling, race/rematch, cooperative rounds, learning activities, replays, backups and offline navigation. See [verification notes](docs/verification.md) for milestone results and boundaries.
 
 ## Configuration and deployment
 
@@ -192,7 +211,7 @@ The included `vercel.json` configures frontend builds, static pages, private rou
 
 - Server restarts remove all rooms, guest sessions, and temporary multiplayer results.
 - Practice history stores the latest **200 tests** in the current browser. Clearing browser data removes it; cross-device sync is not implemented.
-- Input supports printable English ASCII characters and Backspace. Paste, arbitrary cursor editing, and arbitrary IME text transformations are not supported. Mobile keyboards can use the native typing input field. Native input is covered by browser tests; device-specific keyboard behavior may vary.
+- Solo input supports printable Latin characters and accents, with newline input in Code Sprint. Multiplayer passages remain English ASCII. Paste and arbitrary cursor editing are disabled. Mobile keyboards can use the native input field; physical-device and input-method behavior may vary.
 - Receipt-time scoring can disadvantage high-latency connections. Rate limits detect obvious bursts but do not make browser races cheat-proof.
 - The current release targets local use and a single backend instance. Public deployment needs further operational and security hardening.
 
@@ -209,7 +228,9 @@ The included `vercel.json` configures frontend builds, static pages, private rou
 - [ ] Expand latency, interruption, and long-running resource tests
 - [ ] Improve assistive-technology and mobile keyboard support
 - [ ] Harden and document a public self-hosted deployment
-- [ ] Explore weak-key exercises, ghost races, and additional content modes
+- [x] Targeted drills, ghost races, replays and additional content modes
+- [x] Daily and skill challenges, solo arcade games, cooperative relay and boss modes
+- [x] Local achievement progress, studio backups and offline solo support
 
 ## Documentation
 
@@ -219,6 +240,7 @@ The included `vercel.json` configures frontend builds, static pages, private rou
 - [Multiplayer command and event contracts](docs/multiplayer-events.md)
 - [Deployment guide](docs/deployment.md)
 - [SEO and Vercel configuration](docs/seo.md)
+- [Learning, challenges and games](docs/learning-and-games.md)
 - [Verification notes](docs/verification.md)
 
 ## Author

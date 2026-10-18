@@ -48,6 +48,10 @@ Use strict TypeScript, ESLint, unit/integration tests, and browser tests. Cover 
 
 Rooms and multiplayer results are temporary. Browser history is device-specific and disappears when browser data is cleared. There is no cross-device synchronization. Public deployment must be assessed separately from free local operation; no permanent zero-cost hosting guarantee is made. See [deployment](deployment.md).
 
-## Future work
+## Extended learning release
 
-Persist practice settings, broaden network/resource/accessibility testing, add mobile keyboard support, and harden public self-hosting. Weak-key exercises, adaptive practice, ghost racing, replay, code typing, daily challenges, and other content modes are optional later additions after core reliability.
+The learning release adds the daily trio, targeted and adaptive drills, recorded ghosts, five-minute plans, beginner lessons, skill challenges, Latin-language content, six solo arcade experiences, private cooperative relay/boss rooms, replay inspection, local milestones, weekly goals, personal appearance settings, friend challenge links, result cards, studio backup import/export and offline solo caching. See [activity rules](learning-and-games.md).
+
+## Operational follow-up
+
+Broaden real-device, network/resource and assistive-technology testing, and verify the actual production deployment. These checks do not imply a guarantee of public uptime, search ranking or perfect cheat prevention.

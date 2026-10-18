@@ -18,7 +18,7 @@ The domain `typespeed.vercel.app` is only a possible name, not a verified assign
 
 ## Indexing boundaries
 
-Public pages: home/practice, multiplayer information, typing guides, about, and privacy. Personal analytics, settings, recordings, room invitations, and unknown routes are not indexable. Vercel adds X-Robots-Tag to private paths. Do not replace the deployment configuration with a universal SPA rewrite: unknown URLs must return a real 404. Keep JavaScript and CSS crawlable. A robots exclusion is not access control; room authorization remains on the server.
+Public pages: home/practice, multiplayer information, the challenge and arcade catalogs, typing guides, about, and privacy. Personal analytics, studio insights, activity sessions, settings, recordings, room invitations, and unknown routes are not indexable. Vercel adds X-Robots-Tag to private paths. Do not replace the deployment configuration with a universal SPA rewrite: unknown URLs must return a real 404. Keep JavaScript and CSS crawlable. A robots exclusion is not access control; room authorization remains on the server.
 
 ## After launch
 
