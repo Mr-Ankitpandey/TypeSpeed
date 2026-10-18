@@ -2,7 +2,7 @@
 
 **Find your flow. Practice with purpose. Race with friends.**
 
-A free, open-source typing practice and private multiplayer platform by **[Ankit Pandey](https://github.com/Mr-Ankitpandey)**. Start typing without an account, track your progress on your device, or invite friends to a host-approved race.
+A free, open-source typing practice and private multiplayer platform. Start typing without an account, track your progress on your device, or invite friends to a host-approved race.
 
 [**Launch TypeSpeed ↗**](https://typespeed-a.vercel.app/) · [Features](#features) · [Quick start](#quick-start) · [Multiplayer](#how-multiplayer-works) · [Documentation](#documentation)
 
@@ -59,9 +59,6 @@ See [activity rules and storage boundaries](docs/learning-and-games.md) for exac
 
 ![TypeSpeed typing arcade](docs/images/typing-arcade.png)
 
-### Search visibility
-
-Public pages are prerendered to readable HTML with unique titles and descriptions, share metadata, canonical URLs, structured data, a sitemap, and robots.txt. Original typing guides explain speed and accuracy. Personal pages and room links opt out of indexing. Production URL metadata is generated only when the actual domain is configured; search rankings are not guaranteed.
 
 ## Quick start
 
@@ -128,41 +125,6 @@ The server accepts input by receipt time within the official race window. Client
 | Testing    | Vitest and Playwright                                       |
 | Tooling    | npm workspaces, ESLint, Prettier, tsup                      |
 
-The application uses free, open-source dependencies and a single persistent backend process. Docker, databases, queues, and managed WebSocket providers are not required.
-
-## Project structure
-
-```text
-TypeSpeed/
-├── apps/
-│   ├── web/
-│   │   └── src/
-│   │       ├── components/          # Reusable typing UI
-│   │       ├── features/
-│   │       │   ├── typing/          # Solo practice
-│   │       │   ├── learning/        # Challenges, arcade, studio and replays
-│   │       │   └── multiplayer/     # Room and race screens
-│   │       ├── lib/                 # Browser storage helpers
-│   │       ├── App.tsx              # Routes, analytics, settings, app shell
-│   │       ├── main.tsx             # Browser entry and offline registration
-│   │       ├── materials.css        # Shared dark/light glass tokens
-│   │       └── styles.css
-│   └── server/
-│       └── src/
-│           ├── rooms/              # Room/session/race lifecycle
-│           ├── index.ts            # HTTP and Socket.IO adapters
-│           └── realtime.test.ts
-├── packages/
-│   ├── typing-engine/              # Pure typing, content, scoring, ranking
-│   └── shared/                     # Runtime schemas and event contracts
-├── tests/                          # Browser acceptance tests
-├── docs/                           # Architecture, requirements, deployment
-├── package.json
-└── package-lock.json
-```
-
-The same framework-independent engine powers solo feedback and authoritative multiplayer scoring. The backend owns permissions, membership, timing, accepted operations, and final race results.
-
 ## Development commands
 
 Run these commands from the repository root:
@@ -191,53 +153,6 @@ npm run test:e2e
 ```
 
 Tests cover corrections and scoring, rankings, authorization, approval and rejection, capacity checks, replayed/out-of-order input, reconnection, cleanup, browser history, responsive layouts, long-passage scrolling, race/rematch, cooperative rounds, learning activities, replays, backups and offline navigation. See [verification notes](docs/verification.md) for milestone results and boundaries.
-
-## Configuration and deployment
-
-| Variable          | Used by        | Default / purpose                                                                                        |
-| ----------------- | -------------- | -------------------------------------------------------------------------------------------------------- |
-| `PORT`            | Backend        | `3001`                                                                                                   |
-| `HOST`            | Backend        | `127.0.0.1`                                                                                              |
-| `ALLOWED_ORIGINS` | Backend        | `http://127.0.0.1:5173,http://localhost:5173`; comma-separated exact frontend origins                    |
-| `VITE_SERVER_URL` | Frontend build | Unset: connect through the same origin; set for a separately hosted backend                              |
-| `SITE_URL`        | Frontend build | Actual public HTTPS origin for canonical URLs and sitemap; falls back to Vercel's production project URL |
-
-Set backend variables in the process environment before starting it. The backend does not automatically load `.env` files. Vite handles frontend environment variables at development/build time.
-
-Build outputs are `apps/web/dist` and `apps/server/dist`. Production self-hosting requires static hosting with SPA fallback, a persistent Node process, and HTTPS/WebSocket proxy configuration. Local production preview on port `4173` also requires that origin in `ALLOWED_ORIGINS`.
-
-The public frontend is [https://typespeed-a.vercel.app/](https://typespeed-a.vercel.app/). The included `vercel.json` configures frontend builds, static pages, private route indexing headers and room routing. Import the repository root (`./`) on Vercel with the **Other** preset; the tracked configuration builds only the web workspace.
-
-For this deployment, set `SITE_URL=https://typespeed-a.vercel.app` and `VITE_SERVER_URL` to the actual backend HTTPS origin, then redeploy the frontend. On Render, run the backend as one Node web service from the repository root: build with `npm ci --include=dev && npm run build -w @typespeed/server`, and start with `npm run start -w @typespeed/server`. Set `HOST=0.0.0.0`, `NODE_ENV=production`, `NODE_VERSION=24` and `ALLOWED_ORIGINS=https://typespeed-a.vercel.app`; use `/health` for the health check and the provider-supplied `PORT`. The backend root `/` has no page and returns 404 by design.
-
-The in-memory multiplayer backend requires one persistent process. Restarts erase active rooms; hosting plans that sleep can delay the first connection. See the [SEO and Vercel guide](docs/seo.md) and [deployment guide](docs/deployment.md) for configuration details.
-
-## Current limitations
-
-- Server restarts remove all rooms, guest sessions, and temporary multiplayer results.
-- Practice history stores the latest **200 tests** in the current browser. Clearing browser data removes it; cross-device sync is not implemented.
-- Solo input supports printable Latin characters and accents, with newline input in Code Sprint. Multiplayer passages remain English ASCII. Paste and arbitrary cursor editing are disabled. Clicking or tapping the passage focuses hidden native input for mobile keyboard support; physical-device and input-method behavior may vary.
-- Receipt-time scoring can disadvantage high-latency connections. Rate limits detect obvious bursts but do not make browser races cheat-proof.
-- Multiplayer supports a single backend instance. Broader load, latency, assistive-technology and physical-device testing remain ongoing work; the public release is not a formal security or accessibility certification.
-
-## Roadmap
-
-- [x] Strict TypeScript workspace and reusable typing engine
-- [x] Solo practice, results, browser history, analytics, and themes
-- [x] Guest rooms with backend-enforced host approval
-- [x] Synchronized races, server-side scoring, results, and rematches
-- [x] Core automated tests and responsive interface
-- [x] Persist practice-setting preferences
-- [x] Glassmorphism interface with dark/light and accessibility preferences
-- [x] Prerendered public pages, SEO metadata, sitemap generation, and Vercel frontend configuration
-- [x] Public Vercel frontend at typespeed-a.vercel.app
-- [x] Unified glass materials, premium header/footer and direct passage input
-- [ ] Expand latency, interruption, and long-running resource tests
-- [ ] Improve assistive-technology and mobile keyboard support
-- [ ] Harden and document a public self-hosted deployment
-- [x] Targeted drills, ghost races, replays and additional content modes
-- [x] Daily and skill challenges, solo arcade games, cooperative relay and boss modes
-- [x] Local achievement progress, studio backups and offline solo support
 
 ## Documentation
 
