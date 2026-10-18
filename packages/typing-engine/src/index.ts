@@ -1,4 +1,8 @@
 export type Operation = { kind: 'insert'; char: string } | { kind: 'delete' };
+// One BMP character keeps caret offsets, backspace and scoring consistent.
+export const isTypingCharacter = (char: string) =>
+  char.length === 1 &&
+  (char === '\n' || /^[\x20-\x7e\u00a1-\u024f]$/.test(char));
 export type TypingState = {
   typed: string;
   attempts: number;
@@ -25,7 +29,7 @@ export function applyOperation(
       backspaces: state.backspaces + 1,
     };
   if (
-    !/^[\x20-\x7e]$/.test(operation.char) ||
+    !isTypingCharacter(operation.char) ||
     state.typed.length >= passage.length
   )
     return state;
