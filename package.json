@@ -16,7 +16,8 @@
     "test": "vitest run",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:offline": "npm run build -w @typespeed/web && playwright test --config playwright.offline.config.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",

@@ -1,4 +1,18 @@
 export const publicPages = {
+  '/challenges': {
+    title: 'Daily Typing Challenges & Lessons | TypeSpeed',
+    description:
+      'Practice with daily challenges, targeted drills, beginner lessons, ghost races and language exercises. Free and account-free.',
+    heading: 'Typing challenges and learning',
+    sections: [],
+  },
+  '/games': {
+    title: 'Free Typing Games & Arcade | TypeSpeed',
+    description:
+      'Play Wordfall, Precision Tower, Keyboard Defender, Rally, Rhythm Flow and Story Quest. Improve typing with relaxed and survival modes.',
+    heading: 'Free typing arcade',
+    sections: [],
+  },
   '/': {
     title: 'Free Typing Speed Test & Practice | TypeSpeed',
     description:
@@ -110,6 +124,10 @@ export const publicPages = {
       [
         'Remove your data',
         'Use Clear history on the progress screen to remove saved test summaries. Clearing this site’s browser data removes all local settings, history and recordings. Leaving a multiplayer room revokes your active membership.',
+      ],
+      [
+        'Recordings, backups and challenge links',
+        'Local recordings include the practiced passage and timestamped keystrokes. Studio backups contain those recordings, preferences and progress. Challenge links include the full passage and an unverified target score in the URL fragment, so anyone receiving the link can read that content. The offline cache stores application files, not multiplayer traffic.',
       ],
     ],
   },

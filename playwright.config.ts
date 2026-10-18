@@ -1,6 +1,7 @@
 import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
+  testIgnore: '**/offline.spec.ts',
   timeout: 100_000,
   use: {
     baseURL: 'http://127.0.0.1:5173',

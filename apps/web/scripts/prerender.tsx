@@ -1,4 +1,5 @@
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, readdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
 import { resolve } from 'node:path';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
@@ -27,6 +28,8 @@ const paths = [
   '/analytics',
   '/settings',
   '/replays',
+  '/insights',
+  '/play',
   '/404',
 ];
 for (const path of paths) {
@@ -68,4 +71,46 @@ if (origin)
   );
 console.log(
   `Prerendered ${paths.length} pages. ${origin ? `Canonical origin: ${origin}` : 'SITE_URL unset: canonical URLs and sitemap intentionally omitted.'}`,
+);
+const assets = (await readdir(resolve(dist, 'assets'))).map(
+  (name) => `/assets/${name}`,
+);
+const offlinePaths = [
+  '/',
+  '/challenges',
+  '/games',
+  '/play',
+  '/insights',
+  '/replays',
+  '/settings',
+  '/analytics',
+];
+const version = createHash('sha256')
+  .update('offline-v2:' + template + assets.join('|'))
+  .digest('hex')
+  .slice(0, 12);
+await writeFile(
+  resolve(dist, 'sw.js'),
+  `
+const CACHE='typespeed-${version}';
+const PATHS=${JSON.stringify(offlinePaths)};
+self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(async cache=>{
+ await cache.addAll(${JSON.stringify([...assets, '/favicon.svg'])});
+ for(const path of PATHS) {
+  const response=await fetch(path==='/'?'/index.html':path+'/index.html');
+  if(!response.ok)throw new Error('Offline page unavailable');
+  await cache.put(path,response);
+ }
+})));
+self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith('typespeed-')&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',event=>{
+ const url=new URL(event.request.url);
+ if(event.request.method!=='GET'||url.origin!==self.location.origin)return;
+ if(event.request.mode==='navigate'&&PATHS.includes(url.pathname)) {
+  event.respondWith(fetch(event.request).catch(()=>caches.open(CACHE).then(cache=>cache.match(url.pathname))));
+ } else if(url.pathname.startsWith('/assets/')||url.pathname==='/favicon.svg') {
+  event.respondWith(caches.open(CACHE).then(cache=>cache.match(url.pathname).then(found=>found||fetch(event.request))));
+ }
+});
+`,
 );

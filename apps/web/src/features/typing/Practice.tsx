@@ -19,6 +19,7 @@ import {
 import { TypingArea } from '../../components/TypingArea';
 import { readHistory, saveStored, type Result } from '../../lib/storage';
 import { readPreferences } from '../../lib/preferences';
+import { saveRecording, type TimedOperation } from '../../lib/learning';
 import {
   PerformanceChart,
   type Sample,
@@ -33,6 +34,7 @@ export function Practice() {
   const [punctuation, setPunctuation] = useState(preferences.punctuation);
   const [numbers, setNumbers] = useState(preferences.numbers);
   const samples = useRef<Sample[]>([]);
+  const recordingEvents = useRef<TimedOperation[]>([]);
   const [passage, setPassage] = useState(() =>
     generatePassage({ difficulty, punctuation, numbers }),
   );
@@ -51,6 +53,7 @@ export function Practice() {
     setElapsed(0);
     setResult(null);
     samples.current = [];
+    recordingEvents.current = [];
     setPassage(generatePassage({ difficulty, punctuation, numbers }));
   };
   useEffect(() => {
@@ -81,9 +84,23 @@ export function Practice() {
       ],
     };
     setResult(next);
+    const recordingSaved = saveRecording({
+      id: next.id,
+      title: 'Solo practice',
+      mode: 'practice',
+      date: next.date,
+      passage,
+      duration,
+      events: recordingEvents.current,
+      completed: true,
+      passed: next.accuracy >= 95 && next.correct >= 25,
+    });
     setElapsed(duration);
     setStorageWarning(
-      !saveStored('typespeed.history', [next, ...readHistory()].slice(0, 200)),
+      !saveStored(
+        'typespeed.history',
+        [next, ...readHistory()].slice(0, 200),
+      ) || !recordingSaved,
     );
   };
   useEffect(() => {
@@ -113,6 +130,11 @@ export function Practice() {
       finish();
       return;
     }
+    if (recordingEvents.current.length < 15000)
+      recordingEvents.current.push({
+        ms: performance.now() - started.current,
+        op,
+      });
     stateRef.current = applyOperation(stateRef.current, passage, op);
     setState(stateRef.current);
   }
@@ -195,12 +217,24 @@ export function Practice() {
               {duration} seconds · {difficulty} · {result.backspaces} backspaces
             </p>
             <PerformanceChart samples={result.samples ?? []} />
+            <div className="action-row">
+              <a className="quiet" href="/play?mode=mistakes">
+                Practice my mistakes
+              </a>
+              <a className="quiet" href="/play?mode=ghost">
+                Race a ghost
+              </a>
+              <a className="quiet" href="/replays">
+                View replay
+              </a>
+            </div>
             <button className="primary" onClick={reset}>
               Try again <RotateCcw size={16} />
             </button>
             {storageWarning && (
               <p role="status">
-                Browser storage is unavailable. This result could not be saved.
+                Browser storage is unavailable. Some result data could not be
+                saved.
               </p>
             )}
           </div>

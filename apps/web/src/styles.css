@@ -1,4 +1,240 @@
 @import 'tailwindcss';
+/* Learning and arcade surfaces share the platform glass palette. */
+.explore-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 22px;
+}
+.explore-nav a {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  font-size: 12px;
+}
+.explore-nav a.active {
+  background: var(--surface);
+  color: var(--accent);
+}
+.explore-nav a.active:after {
+  display: none;
+}
+.activity-grid {
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 18px;
+}
+.activity-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 0 !important;
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
+}
+.activity-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+.activity-card h2 {
+  margin: 0;
+}
+.activity-arrow {
+  margin-top: auto;
+  padding-top: 12px;
+  color: var(--accent);
+}
+.action-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 24px 0;
+}
+.custom-text {
+  display: block;
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+  padding: 16px;
+  font: 16px monospace;
+  margin: 12px 0;
+}
+.keyboard-guide {
+  padding: 20px;
+  text-align: center;
+  overflow: auto;
+}
+.keyboard-guide > div {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin: 5px 0;
+}
+.keyboard-guide span {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 6px;
+  min-width: 24px;
+  background: var(--surface);
+  font-size: 12px;
+}
+.keyboard-guide .key-next {
+  background: var(--accent);
+  color: var(--bg);
+}
+.activity-session .typing-area {
+  font-size: var(--typing-size, 25px);
+}
+.caret-block .cursor:before {
+  width: 1ch;
+  opacity: 0.3;
+}
+.caret-underline .cursor:before {
+  height: 2px;
+  top: auto;
+  bottom: 0;
+  width: 1ch;
+}
+.accent-violet {
+  --accent: #cbb4ff;
+}
+.light .accent-violet {
+  --accent: #6542a3;
+}
+.accent-amber {
+  --accent: #ffd789;
+}
+.light .accent-amber {
+  --accent: #835500;
+}
+.game-stage {
+  height: 230px;
+  margin: 0 24px 20px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  position: relative;
+  background: radial-gradient(ellipse at top, #326f7f44, transparent);
+  overflow: hidden;
+}
+.game-target {
+  position: absolute;
+  padding: 10px;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  color: var(--accent);
+  font: 20px monospace;
+  transform: translateX(-40%);
+  max-width: 90%;
+}
+.game-ground {
+  position: absolute;
+  bottom: 0;
+  border-top: 2px solid var(--accent);
+  width: 100%;
+  font-size: 11px;
+  padding: 8px;
+  background: var(--panel);
+}
+.defender {
+  background: radial-gradient(ellipse at right, #60499666, transparent);
+}
+.tower-stage {
+  min-height: 180px;
+  text-align: center;
+  padding: 20px;
+}
+.tower-stage > div {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  min-height: 100px;
+}
+.tower-stage span {
+  display: block;
+  border: 1px solid var(--accent);
+  background: var(--surface);
+  border-radius: 4px;
+  height: 10px;
+  margin: 1px;
+}
+.rally-track,
+.rhythm-stage {
+  margin: 20px 32px;
+  padding: 18px;
+  background: var(--surface);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.rally-track > div {
+  min-width: 55px;
+  white-space: nowrap;
+  background: var(--accent);
+  color: var(--bg);
+  border-radius: 8px;
+  padding: 8px;
+  text-align: right;
+  margin: 10px 0;
+}
+.rally-track .ghost-lane {
+  opacity: 0.55;
+}
+.rhythm-stage > div {
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, var(--accent), #bc99ee);
+  transition: width 0.3s;
+}
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 8px;
+  margin: 20px 0;
+}
+.heatmap > span {
+  background: var(--surface);
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.heatmap small {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+}
+.heatmap .weak-key {
+  border-color: #d77e8b;
+}
+.achievement {
+  border: 1px solid var(--line);
+  padding: 18px;
+  border-radius: 14px;
+  color: var(--muted);
+}
+.achievement.unlocked {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+input[type='checkbox'] {
+  width: auto;
+  margin-right: 8px;
+}
+input[type='range'] {
+  padding: 0;
+}
+.marker-list {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-height: 250px;
+  overflow: auto;
+}
+.break-text {
+  overflow-wrap: anywhere;
+}
 @theme {
   --font-sans: 'Segoe UI', Arial, sans-serif;
 }

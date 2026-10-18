@@ -1,5 +1,5 @@
 import { memo, useEffect, useMemo, useRef, type RefObject } from 'react';
-import type { Operation } from '@typespeed/typing-engine';
+import { isTypingCharacter, type Operation } from '@typespeed/typing-engine';
 // Static and completed blocks keep their DOM; only the active block reconciles.
 const CharacterBlock = memo(function CharacterBlock({
   text,
@@ -31,14 +31,17 @@ export function TypingArea({
   typed,
   onOperation,
   disabled = false,
+  multiline = false,
 }: {
   passage: string;
   typed: string;
   onOperation: (op: Operation) => void;
   disabled?: boolean;
+  multiline?: boolean;
 }) {
   const cursor = useRef<HTMLSpanElement>(null);
   const area = useRef<HTMLDivElement>(null);
+  const composed = useRef<string | null>(null);
   useEffect(() => {
     if (cursor.current && area.current)
       area.current.scrollTop = Math.max(0, cursor.current.offsetTop - 55);
@@ -85,10 +88,13 @@ export function TypingArea({
             e.nativeEvent.isComposing
           )
             return;
-          if (e.key === 'Backspace') {
+          if (multiline && e.key === 'Enter') {
+            e.preventDefault();
+            onOperation({ kind: 'insert', char: '\n' });
+          } else if (e.key === 'Backspace') {
             e.preventDefault();
             onOperation({ kind: 'delete' });
-          } else if (/^[\x20-\x7e]$/.test(e.key)) {
+          } else if (isTypingCharacter(e.key)) {
             e.preventDefault();
             onOperation({ kind: 'insert', char: e.key });
           }
@@ -110,7 +116,19 @@ export function TypingArea({
         onInput={(e) => {
           const event = e.nativeEvent as InputEvent;
           if (event.isComposing) return;
-          if (event.inputType === 'deleteContentBackward')
+          if (
+            composed.current !== null &&
+            (event.inputType === 'insertCompositionText' ||
+              event.data === composed.current)
+          ) {
+            composed.current = null;
+            e.currentTarget.value = '\u200b';
+            return;
+          }
+          composed.current = null;
+          if (multiline && event.inputType === 'insertLineBreak')
+            onOperation({ kind: 'insert', char: '\n' });
+          else if (event.inputType === 'deleteContentBackward')
             onOperation({ kind: 'delete' });
           else if (
             event.inputType !== 'insertFromPaste' &&
@@ -118,16 +136,21 @@ export function TypingArea({
           ) {
             for (const char of (
               event.data ?? e.currentTarget.value.replace(/\u200b/g, '')
-            ).slice(0, 32))
-              if (/^[\x20-\x7e]$/.test(char))
+            )
+              .normalize('NFC')
+              .slice(0, 32))
+              if (isTypingCharacter(char))
                 onOperation({ kind: 'insert', char });
           }
           e.currentTarget.value = '\u200b';
         }}
         onCompositionEnd={(e) => {
-          for (const char of e.data.slice(0, 32))
-            if (/^[\x20-\x7e]$/.test(char))
-              onOperation({ kind: 'insert', char });
+          composed.current = e.data;
+          setTimeout(() => {
+            composed.current = null;
+          }, 0);
+          for (const char of e.data.normalize('NFC').slice(0, 32))
+            if (isTypingCharacter(char)) onOperation({ kind: 'insert', char });
           e.currentTarget.value = '\u200b';
         }}
       />

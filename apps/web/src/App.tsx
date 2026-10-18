@@ -1,4 +1,4 @@
-import { NavLink, Route, Routes } from 'react-router-dom';
+import { NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import {
   Keyboard,
   BarChart3,
@@ -14,6 +14,8 @@ import { Multiplayer } from './features/multiplayer/Multiplayer';
 import { readHistory, readStored, saveStored } from './lib/storage';
 import { Seo, ContentPage } from './components/Seo';
 import { publicPages, type PublicPath } from './lib/seo';
+import { LearningHub, ActivityPage } from './features/learning/LearningHub';
+import { Insights, Replays } from './features/learning/Insights';
 
 function Analytics() {
   const [history, setHistory] = useState(readHistory);
@@ -121,6 +123,7 @@ function Analytics() {
   );
 }
 export function App() {
+  const currentLocation = useLocation();
   const [light, setLight] = useState(() =>
     readStored(
       'typespeed.light',
@@ -174,9 +177,30 @@ export function App() {
         </div>
       </header>
       <main id="main-content">
+        <nav className="explore-nav" aria-label="Explore TypeSpeed">
+          <NavLink to="/challenges">Challenges & learning</NavLink>
+          <NavLink to="/games">Typing arcade</NavLink>
+          <NavLink to="/insights">Practice studio</NavLink>
+          <NavLink to="/replays">Replays</NavLink>
+        </nav>
         <Routes>
+          <Route path="/challenges" element={<LearningHub />} />
+          <Route path="/games" element={<LearningHub games />} />
+          <Route
+            path="/play"
+            element={
+              <ActivityPage
+                key={currentLocation.search + currentLocation.hash}
+              />
+            }
+          />
+          <Route path="/insights" element={<Insights />} />
+          <Route path="/replays" element={<Replays />} />
           {Object.keys(publicPages)
-            .filter((path) => !['/', '/multiplayer'].includes(path))
+            .filter(
+              (path) =>
+                !['/', '/multiplayer', '/challenges', '/games'].includes(path),
+            )
             .map((path) => (
               <Route
                 key={path}
