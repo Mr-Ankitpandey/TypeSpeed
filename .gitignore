@@ -9,3 +9,9 @@ playwright-report/
 .env.*
 !.env.example
 *.tsbuildinfo
+
+# Local documentation and test suites
+/docs/
+/tests/
+**/*.test.*
+**/*.spec.*

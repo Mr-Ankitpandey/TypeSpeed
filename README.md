@@ -4,11 +4,9 @@
 
 A free, open-source typing practice and private multiplayer platform. Start typing without an account, track your progress on your device, or invite friends to a host-approved race.
 
-[**Launch TypeSpeed ↗**](https://typespeed-a.vercel.app/) · [Features](#features) · [Quick start](#quick-start) · [Multiplayer](#how-multiplayer-works) · [Documentation](#documentation)
+[**Launch TypeSpeed ↗**](https://typespeed-a.vercel.app/) · [Features](#features) · [Quick start](#quick-start) · [Multiplayer](#how-multiplayer-works)
 
 > **Live app:** [typespeed-a.vercel.app](https://typespeed-a.vercel.app/). The frontend is hosted on Vercel; multiplayer uses a separate persistent backend. No account, database or paid API is required by the application. Public hosting may have provider usage limits.
-
-![TypeSpeed typing practice interface](docs/images/typing-practice.png)
 
 ## Features
 
@@ -55,10 +53,7 @@ Responsive glassmorphism layouts with a unified dark/light material system, desk
 - **Replay and sharing:** playback with correction markers, full-passage friend challenges, downloadable result cards, and validated studio progress backups.
 - **Offline solo use:** production builds cache the solo application after an online visit; multiplayer still needs the backend.
 
-See [activity rules and storage boundaries](docs/learning-and-games.md) for exact behavior. Local and shared challenge scores are unverified; cooperative room outcomes are calculated by the server.
-
-![TypeSpeed typing arcade](docs/images/typing-arcade.png)
-
+Local and shared challenge scores are unverified; cooperative room outcomes are calculated by the server.
 
 ## Quick start
 
@@ -112,7 +107,7 @@ Correcting a mistake removes the retained error but **does not erase the incorre
 
 Rankings compare qualification at **95% accuracy**, then validated WPM, accuracy, and fewer incorrect attempts. Comparisons use full precision; rounding is for display only. Exact ties share a rank. If nobody qualifies, the results show **No qualifying winner**.
 
-The server accepts input by receipt time within the official race window. Client timestamps and client scores are not trusted. See [scoring rules](docs/scoring.md) for the complete policy.
+The server accepts input by receipt time within the official race window. Client timestamps and client scores are not trusted.
 
 ## Technology stack
 
@@ -129,42 +124,19 @@ The server accepts input by receipt time within the official race window. Client
 
 Run these commands from the repository root:
 
-| Command                              | Purpose                                                   |
-| ------------------------------------ | --------------------------------------------------------- |
-| `npm run dev`                        | Start frontend and backend together                       |
-| `npm run dev:web`                    | Start only the frontend                                   |
-| `npm run dev:server`                 | Start only the backend                                    |
-| `npm run typecheck`                  | Check strict TypeScript types                             |
-| `npm run lint`                       | Run ESLint                                                |
-| `npm run format`                     | Format project files with Prettier                        |
-| `npm test`                           | Run engine, room-service, and Socket.IO integration tests |
-| `npm run test:e2e`                   | Run Playwright browser tests                              |
-| `npm run test:offline`               | Build and test production offline solo navigation         |
-| `npm run build`                      | Type-check and build both applications                    |
-| `npm run start -w @typespeed/server` | Start the built backend                                   |
-| `npm run preview -w @typespeed/web`  | Preview the built frontend locally                        |
+| Command                              | Purpose                                |
+| ------------------------------------ | -------------------------------------- |
+| `npm run dev`                        | Start frontend and backend together    |
+| `npm run dev:web`                    | Start only the frontend                |
+| `npm run dev:server`                 | Start only the backend                 |
+| `npm run typecheck`                  | Check strict TypeScript types          |
+| `npm run lint`                       | Run ESLint                             |
+| `npm run format`                     | Format project files with Prettier     |
+| `npm run build`                      | Type-check and build both applications |
+| `npm run start -w @typespeed/server` | Start the built backend                |
+| `npm run preview -w @typespeed/web`  | Preview the built frontend locally     |
 
-Install the test browser before running browser tests:
-
-```bash
-npx playwright install chromium
-npm test
-npm run test:e2e
-```
-
-Tests cover corrections and scoring, rankings, authorization, approval and rejection, capacity checks, replayed/out-of-order input, reconnection, cleanup, browser history, responsive layouts, long-passage scrolling, race/rematch, cooperative rounds, learning activities, replays, backups and offline navigation. See [verification notes](docs/verification.md) for milestone results and boundaries.
-
-## Documentation
-
-- [Product requirements](docs/requirements.md)
-- [Architecture and lifecycle](docs/architecture.md)
-- [Scoring rules](docs/scoring.md)
-- [Multiplayer command and event contracts](docs/multiplayer-events.md)
-- [Deployment guide](docs/deployment.md)
-- [SEO and Vercel configuration](docs/seo.md)
-- [Interface design decisions](docs/ui-design.md)
-- [Learning, challenges and games](docs/learning-and-games.md)
-- [Verification notes](docs/verification.md)
+Documentation and automated test files are maintained locally and are excluded from this public repository.
 
 ## Author
 
